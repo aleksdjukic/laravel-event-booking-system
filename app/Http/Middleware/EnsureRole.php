@@ -9,6 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureRole
 {
+    private function errorResponse(string $message, int $status): Response
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+            'data' => null,
+            'errors' => null,
+        ], $status);
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -19,12 +29,7 @@ class EnsureRole
         $user = $request->user();
 
         if ($user === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'data' => null,
-                'errors' => null,
-            ], 401);
+            return $this->errorResponse('Unauthorized', 401);
         }
 
         $allowedRoles = [];
@@ -40,12 +45,7 @@ class EnsureRole
         $userRole = $user->role instanceof Role ? $user->role->value : (string) $user->role;
 
         if (! in_array($userRole, $allowedRoles, true)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Forbidden',
-                'data' => null,
-                'errors' => null,
-            ], 403);
+            return $this->errorResponse('Forbidden', 403);
         }
 
         return $next($request);

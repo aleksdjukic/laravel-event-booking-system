@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthenticationException $exception, Request $request) {
-            if ($request->is('api/v1/*')) {
+            if ($request->is('api/*')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized',
