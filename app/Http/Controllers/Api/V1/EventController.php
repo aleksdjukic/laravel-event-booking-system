@@ -22,7 +22,8 @@ class EventController extends Controller
         $nonCacheableKeys = array_diff($queryKeys, ['page']);
 
         if ($nonCacheableKeys === []) {
-            $cacheKey = 'events:index:default:page:'.max(1, $page);
+            $version = Cache::get('events:index:version', 1);
+            $cacheKey = 'events:index:v'.$version.':page:'.max(1, $page);
             $events = Cache::remember($cacheKey, 120, function () use ($request) {
                 return Event::query()->paginate();
             });
