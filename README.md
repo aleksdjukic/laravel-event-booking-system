@@ -1,152 +1,82 @@
-# Event Booking System (Backend)
+# Event Booking System Backend (Laravel 12)
 
-Laravel 12 API-only backend for event booking with Sanctum authentication, RBAC, events/tickets/bookings/payments, caching, and queued notifications.
-
-## Requirements
-- PHP 8.2+
-- Composer
-- Laravel 12
-- Database: MySQL (default) or SQLite
+## Overview
+API-only Event Booking System built with Laravel 12.
+Core modules: Sanctum auth, RBAC, Events, Tickets, Bookings, Payments (mocked), caching, queued notifications, and tests.
 
 ## Setup
 1. `composer install`
-2. Copy env file locally: `cp .env.example .env`
-3. Configure DB connection in `.env` and generate app key:
-   - `php artisan key:generate`
-4. Run migrations and seeders:
-   - `php artisan migrate:fresh --seed`
-5. Run tests:
-   - `php artisan test`
-6. Start server:
-   - `php artisan serve`
+2. `cp .env.example .env`
+3. `php artisan key:generate`
+4. Configure database values in `.env` (local)
+5. `php artisan migrate:fresh --seed`
+6. `php artisan test`
+7. `php artisan serve`
 
-## Important Notes
-- All endpoints are versioned under `/api/v1`.
-- No unversioned API routes exist.
-- Roles are stored as string values: `admin`, `organizer`, `customer`.
-- `tickets.quantity` is remaining inventory (decremented on successful payment).
-- Payment flow is mocked using `force_success` (boolean, default `true`).
-- `/api/v1/bookings` is forbidden for organizer in current scope.
-- `PreventDoubleBooking` blocks same user + same ticket when booking is `pending` or `confirmed`.
-- Events list cache:
-  - only cached when query params contain only `page`
-  - TTL is 120 seconds
-  - cache key uses version invalidation (`events:index:version`)
-- Payment idempotency:
-  - unique `payments.booking_id`
-  - duplicate payment returns `409 Conflict`
+## API Endpoints (ALL under /api/v1)
+- `GET /api/v1/ping`
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/logout`
+- `GET /api/v1/user/me`
+- `GET /api/v1/events`
+- `GET /api/v1/events/{id}`
+- `POST /api/v1/events`
+- `PUT /api/v1/events/{id}`
+- `DELETE /api/v1/events/{id}`
+- `POST /api/v1/events/{event_id}/tickets`
+- `PUT /api/v1/tickets/{id}`
+- `DELETE /api/v1/tickets/{id}`
+- `POST /api/v1/tickets/{id}/bookings`
+- `GET /api/v1/bookings`
+- `PUT /api/v1/bookings/{id}/cancel`
+- `POST /api/v1/bookings/{id}/payment`
+- `GET /api/v1/payments/{id}`
 
-## API Endpoints (/api/v1)
+## Roles & Permissions Summary
+- `admin`
+  - full access to events, tickets, bookings, and payments
+- `organizer`
+  - manage own events and tickets
+  - forbidden for customer-scoped bookings/payments endpoints
+- `customer`
+  - create bookings, view own bookings, cancel own pending bookings
+  - pay bookings (ownership enforced), view own payments
 
-| Module | Method | Endpoint |
-|---|---|---|
-| Ping | GET | `/api/v1/ping` |
-| Auth | POST | `/api/v1/auth/register` |
-| Auth | POST | `/api/v1/auth/login` |
-| Auth | POST | `/api/v1/auth/logout` |
-| User | GET | `/api/v1/user/me` |
-| Events | GET | `/api/v1/events` |
-| Events | GET | `/api/v1/events/{id}` |
-| Events | POST | `/api/v1/events` |
-| Events | PUT | `/api/v1/events/{id}` |
-| Events | DELETE | `/api/v1/events/{id}` |
-| Tickets | POST | `/api/v1/events/{event_id}/tickets` |
-| Tickets | PUT | `/api/v1/tickets/{id}` |
-| Tickets | DELETE | `/api/v1/tickets/{id}` |
-| Bookings | POST | `/api/v1/tickets/{id}/bookings` |
-| Bookings | GET | `/api/v1/bookings` |
-| Bookings | PUT | `/api/v1/bookings/{id}/cancel` |
-| Payments | POST | `/api/v1/bookings/{id}/payment` |
-| Payments | GET | `/api/v1/payments/{id}` |
+## Response Envelope
+Controller responses use a consistent JSON envelope:
+- success response:
+  - `success: true`
+  - `message: string`
+  - `data: mixed`
+  - `errors: null`
+- error response:
+  - `success: false`
+  - `message: string`
+  - `data: null`
+  - `errors: mixed|null`
 
-## cURL Examples
+Status codes used:
+- `200` success read/update/delete/logout/me
+- `201` successful create/register/booking/payment
+- `401` unauthenticated
+- `403` forbidden
+- `404` not found
+- `409` conflict (inventory, duplicate payment, invalid state, double booking)
+- `422` validation errors
 
-### Register
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "John Customer",
-    "email": "john.customer@example.com",
-    "password": "password123",
-    "password_confirmation": "password123",
-    "phone": "0601234567"
-  }'
-```
+## Caching Notes
+- Events index cache is used only when query params contain only `page`.
+- Cache key format: `events:index:v{version}:page:{page}`.
+- TTL: `120` seconds.
+- Version key invalidation strategy: `events:index:version` is incremented on event/ticket mutations.
 
-### Login
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john.customer@example.com",
-    "password": "password123"
-  }'
-```
+## Design Decisions
+- `role` is stored as a string for portability and constrained in app logic to: `admin|organizer|customer`.
+- `User -> payments` relation is implemented as `hasManyThrough` via `bookings`.
+- `tickets.quantity` is remaining inventory and is decremented only on successful payment.
 
-### Me
-```bash
-curl -X GET http://127.0.0.1:8000/api/v1/user/me \
-  -H "Authorization: Bearer <TOKEN>"
-```
-
-### Create Event (Organizer/Admin)
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/events \
-  -H "Authorization: Bearer <TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Tech Expo 2026",
-    "description": "Annual expo",
-    "date": "2026-09-10 10:00:00",
-    "location": "Belgrade"
-  }'
-```
-
-### Create Ticket (Organizer/Admin)
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/events/1/tickets \
-  -H "Authorization: Bearer <TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "Standard",
-    "price": 80.00,
-    "quantity": 50
-  }'
-```
-
-### Create Booking (Customer)
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/tickets/1/bookings \
-  -H "Authorization: Bearer <TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "quantity": 2
-  }'
-```
-
-### Pay Booking (force_success=true)
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/bookings/1/payment \
-  -H "Authorization: Bearer <TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "force_success": true
-  }'
-```
-
-### Pay Booking (force_success=false)
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/bookings/1/payment \
-  -H "Authorization: Bearer <TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "force_success": false
-  }'
-```
-
-## Postman
-- Collection file: `postman/EventBookingSystem.postman_collection.json`
-- Variables:
-  - `base_url` (default: `http://127.0.0.1:8000`)
-  - `token` (Bearer token)
+## Queue & Notification Note
+- Booking confirmation notification uses `ShouldQueue` and `database` channel.
+- Notification payload uses primitive fields (`booking_id`, `event_title`, `ticket_type`, `quantity`).
+- Tests assert notification behavior using `Notification::fake()`.
