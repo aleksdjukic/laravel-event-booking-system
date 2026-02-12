@@ -130,6 +130,48 @@ class RbacFeatureTest extends TestCase
             ->assertJsonPath('success', true);
     }
 
+    public function test_organizer_cannot_create_duplicate_ticket_type_for_same_event(): void
+    {
+        $organizer = $this->createUser('organizer', 'rbac.organizer.duplicate.create@example.com');
+        $event = $this->createEvent($organizer, 'Duplicate Ticket Event');
+
+        Sanctum::actingAs($organizer);
+
+        $this->postJson('/api/v1/events/'.$event->id.'/tickets', [
+            'type' => 'VIP',
+            'price' => 120,
+            'quantity' => 15,
+        ])->assertStatus(201);
+
+        $this->postJson('/api/v1/events/'.$event->id.'/tickets', [
+            'type' => 'VIP',
+            'price' => 150,
+            'quantity' => 20,
+        ])->assertStatus(409)
+            ->assertJsonPath('success', false);
+    }
+
+    public function test_organizer_cannot_update_ticket_to_duplicate_type_for_same_event(): void
+    {
+        $organizer = $this->createUser('organizer', 'rbac.organizer.duplicate.update@example.com');
+        $event = $this->createEvent($organizer, 'Duplicate Update Event');
+
+        $vipTicket = $this->createTicket($event, 'VIP', '120.00', 10);
+        $standardTicket = $this->createTicket($event, 'Standard', '80.00', 10);
+
+        Sanctum::actingAs($organizer);
+
+        $this->putJson('/api/v1/tickets/'.$standardTicket->id, [
+            'type' => 'VIP',
+        ])->assertStatus(409)
+            ->assertJsonPath('success', false);
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $vipTicket->id,
+            'type' => 'VIP',
+        ]);
+    }
+
     private function createUser(string $role, string $email): User
     {
         $user = new User();

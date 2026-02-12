@@ -17,6 +17,13 @@ class EventController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'date' => ['nullable', 'date'],
+            'search' => ['nullable', 'string', 'max:100'],
+            'location' => ['nullable', 'string', 'max:100'],
+            'page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
         $page = (int) $request->query('page', 1);
         $queryKeys = array_keys($request->query());
         $nonCacheableKeys = array_diff($queryKeys, ['page']);

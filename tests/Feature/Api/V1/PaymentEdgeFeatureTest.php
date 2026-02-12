@@ -57,6 +57,83 @@ class PaymentEdgeFeatureTest extends TestCase
             ->assertJsonPath('message', 'Not enough ticket inventory.');
     }
 
+    public function test_customer_cannot_pay_another_customers_booking(): void
+    {
+        Notification::fake();
+
+        $customerA = $this->createUser('customer', 'payment.customer.a@example.com');
+        $customerB = $this->createUser('customer', 'payment.customer.b@example.com');
+
+        $booking = $this->createPendingBooking($customerA, 10, 2);
+
+        Sanctum::actingAs($customerB);
+
+        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+            'force_success' => true,
+        ])->assertStatus(403)
+            ->assertJsonPath('success', false);
+    }
+
+    public function test_payment_force_success_false_cancels_booking_and_keeps_inventory(): void
+    {
+        Notification::fake();
+
+        $customer = $this->createUser('customer', 'payment.force.fail.customer@example.com');
+        $booking = $this->createPendingBooking($customer, 7, 3);
+
+        $ticketId = $booking->ticket_id;
+
+        Sanctum::actingAs($customer);
+
+        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+            'force_success' => false,
+        ])->assertStatus(201)
+            ->assertJsonPath('data.status', 'failed');
+
+        $this->assertDatabaseHas('bookings', [
+            'id' => $booking->id,
+            'status' => 'cancelled',
+        ]);
+
+        $this->assertDatabaseHas('payments', [
+            'booking_id' => $booking->id,
+            'status' => 'failed',
+            'amount' => '240.00',
+        ]);
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticketId,
+            'quantity' => 7,
+        ]);
+    }
+
+    public function test_payment_show_policy_enforced_for_customer_and_admin(): void
+    {
+        Notification::fake();
+
+        $customerA = $this->createUser('customer', 'payment.show.customer.a@example.com');
+        $customerB = $this->createUser('customer', 'payment.show.customer.b@example.com');
+        $admin = $this->createUser('admin', 'payment.show.admin@example.com');
+
+        $booking = $this->createPendingBooking($customerA, 10, 2);
+
+        Sanctum::actingAs($customerA);
+        $paymentResponse = $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+            'force_success' => true,
+        ])->assertStatus(201);
+
+        $paymentId = (int) $paymentResponse->json('data.id');
+
+        Sanctum::actingAs($customerB);
+        $this->getJson('/api/v1/payments/'.$paymentId)->assertStatus(403);
+
+        Sanctum::actingAs($admin);
+        $this->getJson('/api/v1/payments/'.$paymentId)
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $paymentId);
+    }
+
     private function createUser(string $role, string $email): User
     {
         $user = new User();

@@ -40,6 +40,12 @@ class PaymentController extends Controller
                 return $this->error('Booking not found.', 404);
             }
 
+            if ($request->user()->role === 'customer' && $booking->user_id !== $request->user()->id) {
+                DB::rollBack();
+
+                return $this->error('Forbidden', 403);
+            }
+
             if ($booking->status !== 'pending') {
                 DB::rollBack();
 
@@ -148,10 +154,17 @@ class PaymentController extends Controller
 
     private function isDuplicatePaymentException(QueryException $exception): bool
     {
-        $message = $exception->getMessage();
+        $message = strtolower($exception->getMessage());
 
-        return str_contains($message, 'payments_booking_id_unique')
-            || str_contains($message, 'payments.booking_id')
-            || (string) $exception->getCode() === '23000';
+        if (str_contains($message, 'payments_booking_id_unique')) {
+            return true;
+        }
+
+        $hasBookingIdColumn = str_contains($message, 'payments.booking_id')
+            || str_contains($message, '`booking_id`')
+            || str_contains($message, ' booking_id ');
+        $hasUniqueHint = str_contains($message, 'unique') || str_contains($message, 'duplicate');
+
+        return $hasBookingIdColumn && $hasUniqueHint;
     }
 }

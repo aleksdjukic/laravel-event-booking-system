@@ -26,6 +26,14 @@ class TicketController extends Controller
         $this->authorize('create', [Ticket::class, $event]);
 
         $validated = $request->validated();
+        $duplicateTypeExists = Ticket::query()
+            ->where('event_id', $event->id)
+            ->where('type', $validated['type'])
+            ->exists();
+
+        if ($duplicateTypeExists) {
+            return $this->error('Ticket type already exists for this event.', 409);
+        }
 
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
@@ -50,6 +58,16 @@ class TicketController extends Controller
         $this->authorize('update', $ticket);
 
         $validated = $request->validated();
+        $type = $validated['type'] ?? $ticket->type;
+        $duplicateTypeExists = Ticket::query()
+            ->where('event_id', $ticket->event_id)
+            ->where('type', $type)
+            ->where('id', '!=', $ticket->id)
+            ->exists();
+
+        if ($duplicateTypeExists) {
+            return $this->error('Ticket type already exists for this event.', 409);
+        }
 
         if (array_key_exists('type', $validated)) {
             $ticket->type = $validated['type'];
