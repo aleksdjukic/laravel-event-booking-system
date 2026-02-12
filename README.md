@@ -77,16 +77,18 @@ Status codes used:
 - Version key invalidation strategy: `events:index:version` is incremented on event/ticket mutations.
 
 ## Design Decisions
-- `role` is stored as a string for portability and constrained in app logic to: `admin|organizer|customer`.
+- `role` is stored in DB as string for portability and represented in code via `App\Enums\Role` (enum cast on `User`).
 - `User -> payments` relation is implemented as `hasManyThrough` via `bookings`.
 - `tickets.quantity` is remaining inventory and is decremented only on successful payment.
 
 ## Queue & Notification Note
 - Booking confirmation notification uses `ShouldQueue` and `database` channel.
 - Notification payload uses primitive fields (`booking_id`, `event_title`, `ticket_type`, `quantity`).
-- Tests assert notification behavior using `Notification::fake()`.
+- Tests assert notification behavior using `Notification::fake()` and queue dispatch checks using `Queue::fake()`.
 
 ## Postman Usage Notes
 - All requests require `Accept: application/json`.
 - Authenticated requests require `Authorization: Bearer {{token}}`.
 - Token is auto-set after Postman login requests (collection test script).
+- Postman collection file: `postman_collection.json` (repo root).
+- Includes dedicated login requests for admin/organizer/customer demo users.
