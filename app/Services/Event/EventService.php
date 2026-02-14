@@ -2,48 +2,49 @@
 
 namespace App\Services\Event;
 
+use App\Contracts\Services\EventServiceInterface;
+use App\Contracts\Repositories\EventRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\DTO\Event\CreateEventData;
+use App\DTO\Event\EventIndexData;
+use App\DTO\Event\UpdateEventData;
 use App\Models\Event;
 use App\Models\User;
-use App\Support\Traits\CommonQueryScopes;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
-class EventService
+class EventService implements EventServiceInterface
 {
-    use CommonQueryScopes;
-
-    /**
-     * @param  array<string, mixed>  $query
-     */
-    public function index(array $query): LengthAwarePaginator
+    public function __construct(private readonly EventRepositoryInterface $eventRepository)
     {
-        $page = max(1, (int) ($query['page'] ?? 1));
-        $queryKeys = array_keys($query);
+    }
+
+    public function index(EventIndexData $query): LengthAwarePaginator
+    {
+        $page = $query->page;
+        $queryArray = [
+            'page' => $query->page,
+            'date' => $query->date,
+            'search' => $query->search,
+            'location' => $query->location,
+        ];
+        $queryKeys = array_keys(array_filter($queryArray, static fn (mixed $value) => $value !== null));
         $nonCacheableKeys = array_diff($queryKeys, ['page']);
 
         if ($nonCacheableKeys === []) {
             $version = Cache::get('events:index:version', 1);
             $cacheKey = 'events:index:v'.$version.':page:'.$page;
 
-            return Cache::remember($cacheKey, 120, fn () => Event::query()->paginate());
+            return Cache::remember($cacheKey, 120, fn () => $this->eventRepository->paginate($query));
         }
 
-        $eventQuery = Event::query();
-        $this->searchByTitle($eventQuery, isset($query['search']) ? (string) $query['search'] : null);
-        $this->filterByDate($eventQuery, isset($query['date']) ? (string) $query['date'] : null);
-
-        if (isset($query['location']) && $query['location'] !== '') {
-            $eventQuery->where('location', 'like', '%'.(string) $query['location'].'%');
-        }
-
-        return $eventQuery->paginate();
+        return $this->eventRepository->paginate($query);
     }
 
     public function show(int $id): Event
     {
-        $event = Event::query()->with('tickets')->find($id);
+        $event = $this->eventRepository->findWithTickets($id);
 
         if ($event === null) {
             throw new DomainException(DomainError::EVENT_NOT_FOUND);
@@ -54,7 +55,7 @@ class EventService
 
     public function findOrFail(int $id): Event
     {
-        $event = Event::query()->find($id);
+        $event = $this->eventRepository->find($id);
 
         if ($event === null) {
             throw new DomainException(DomainError::EVENT_NOT_FOUND);
@@ -63,38 +64,18 @@ class EventService
         return $event;
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function create(User $user, array $data): Event
+    public function create(User $user, CreateEventData $data): Event
     {
-        $event = new Event();
-        $event->title = (string) $data['title'];
-        $event->description = isset($data['description']) ? (string) $data['description'] : null;
-        $event->date = (string) $data['date'];
-        $event->location = (string) $data['location'];
-        $event->created_by = $user->id;
-        $event->save();
-
-        return $event;
+        return $this->eventRepository->create($user, $data);
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function update(Event $event, array $data): Event
+    public function update(Event $event, UpdateEventData $data): Event
     {
-        $event->title = (string) $data['title'];
-        $event->description = isset($data['description']) ? (string) $data['description'] : null;
-        $event->date = (string) $data['date'];
-        $event->location = (string) $data['location'];
-        $event->save();
-
-        return $event;
+        return $this->eventRepository->update($event, $data);
     }
 
     public function delete(Event $event): void
     {
-        $event->delete();
+        $this->eventRepository->delete($event);
     }
 }

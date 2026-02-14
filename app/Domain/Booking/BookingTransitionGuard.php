@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Domain\Booking;
+
+use App\Enums\BookingStatus;
+
+class BookingTransitionGuard
+{
+    public function canCancel(BookingStatus $current): bool
+    {
+        return $current === BookingStatus::PENDING;
+    }
+
+    public function canPay(BookingStatus $current): bool
+    {
+        return $current === BookingStatus::PENDING;
+    }
+}

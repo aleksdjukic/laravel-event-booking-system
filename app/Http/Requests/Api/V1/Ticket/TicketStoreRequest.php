@@ -2,13 +2,17 @@
 
 namespace App\Http\Requests\Api\V1\Ticket;
 
+use App\Models\Event;
+use App\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TicketStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $event = $this->route('event');
+
+        return $event instanceof Event && ($this->user()?->can('create', [Ticket::class, $event]) ?? false);
     }
 
     /**

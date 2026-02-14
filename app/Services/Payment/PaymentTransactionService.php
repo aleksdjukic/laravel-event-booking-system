@@ -2,8 +2,14 @@
 
 namespace App\Services\Payment;
 
+use App\Contracts\Services\PaymentTransactionServiceInterface;
+use App\Domain\Booking\BookingTransitionGuard;
+use App\Domain\Payment\PaymentTransitionGuard;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\DTO\Payment\ProcessPaymentData;
+use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\Role;
 use App\Models\Booking;
 use App\Models\Event;
@@ -14,10 +20,13 @@ use App\Notifications\BookingConfirmedNotification;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
-class PaymentTransactionService
+class PaymentTransactionService implements PaymentTransactionServiceInterface
 {
-    public function __construct(private readonly PaymentGatewayService $gatewayService)
-    {
+    public function __construct(
+        private readonly PaymentGatewayService $gatewayService,
+        private readonly BookingTransitionGuard $bookingTransitionGuard,
+        private readonly PaymentTransitionGuard $paymentTransitionGuard,
+    ) {
     }
 
     public function findOrFail(int $id): Payment
@@ -31,14 +40,14 @@ class PaymentTransactionService
         return $payment;
     }
 
-    public function process(User $user, int $bookingId, ?bool $forceSuccess = null): Payment
+    public function process(User $user, ProcessPaymentData $data): Payment
     {
         $notificationPayload = null;
 
         DB::beginTransaction();
 
         try {
-            $booking = Booking::query()->whereKey($bookingId)->lockForUpdate()->first();
+            $booking = Booking::query()->whereKey($data->bookingId)->lockForUpdate()->first();
 
             if ($booking === null) {
                 throw new DomainException(DomainError::BOOKING_NOT_FOUND);
@@ -56,7 +65,7 @@ class PaymentTransactionService
             $this->ensureInventory($booking, $ticket);
 
             $amount = number_format(((float) $ticket->price) * (int) $booking->quantity, 2, '.', '');
-            $processed = $this->gatewayService->process($booking, $forceSuccess);
+            $processed = $this->gatewayService->process($booking, $data->forceSuccess);
 
             $payment = new Payment();
             $payment->booking_id = $booking->id;
@@ -66,7 +75,7 @@ class PaymentTransactionService
                 $ticket->quantity = $ticket->quantity - $booking->quantity;
                 $ticket->save();
 
-                $booking->status = 'confirmed';
+                $booking->status = BookingStatus::CONFIRMED;
                 $booking->save();
 
                 $notificationPayload = [
@@ -76,17 +85,21 @@ class PaymentTransactionService
                     'quantity' => (int) $booking->quantity,
                 ];
 
-                $payment->status = 'success';
+                $payment->status = PaymentStatus::SUCCESS;
             } else {
-                $booking->status = 'cancelled';
+                $booking->status = BookingStatus::CANCELLED;
                 $booking->save();
-                $payment->status = 'failed';
+                $payment->status = PaymentStatus::FAILED;
             }
 
             $payment->save();
             DB::commit();
 
-            if ($payment->status === 'success' && is_array($notificationPayload)) {
+            $paymentStatus = $payment->status instanceof PaymentStatus
+                ? $payment->status
+                : PaymentStatus::from((string) $payment->status);
+
+            if ($this->paymentTransitionGuard->canNotifyCustomer($paymentStatus) && is_array($notificationPayload)) {
                 $booking->load('user');
                 $booking->user?->notify(new BookingConfirmedNotification(
                     $notificationPayload['booking_id'],
@@ -125,7 +138,11 @@ class PaymentTransactionService
 
     private function ensureBookingCanBePaid(Booking $booking): void
     {
-        if ($booking->status !== 'pending') {
+        $bookingStatus = $booking->status instanceof BookingStatus
+            ? $booking->status
+            : BookingStatus::from((string) $booking->status);
+
+        if (! $this->bookingTransitionGuard->canPay($bookingStatus)) {
             throw new DomainException(DomainError::INVALID_BOOKING_STATE_FOR_PAYMENT);
         }
 

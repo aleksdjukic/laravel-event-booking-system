@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ class Booking extends Model
     protected function casts(): array
     {
         return [
-            'status' => 'string',
+            'status' => BookingStatus::class,
         ];
     }
 

@@ -21,7 +21,7 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::get('/events', [EventController::class, 'index']);
-    Route::get('/events/{id}', [EventController::class, 'show']);
+    Route::get('/events/{event}', [EventController::class, 'show']);
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -30,22 +30,22 @@ Route::prefix('v1')->group(function (): void {
 
     Route::middleware(['auth:sanctum', 'role:admin,organizer'])->group(function (): void {
         Route::post('/events', [EventController::class, 'store']);
-        Route::put('/events/{id}', [EventController::class, 'update']);
-        Route::delete('/events/{id}', [EventController::class, 'destroy']);
-        Route::post('/events/{event_id}/tickets', [TicketController::class, 'store']);
-        Route::put('/tickets/{id}', [TicketController::class, 'update']);
-        Route::delete('/tickets/{id}', [TicketController::class, 'destroy']);
+        Route::put('/events/{event}', [EventController::class, 'update']);
+        Route::delete('/events/{event}', [EventController::class, 'destroy']);
+        Route::post('/events/{event}/tickets', [TicketController::class, 'store']);
+        Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
+        Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'role:customer'])->group(function (): void {
-        Route::post('/tickets/{id}/bookings', [BookingController::class, 'store'])
+        Route::post('/tickets/{ticket}/bookings', [BookingController::class, 'store'])
             ->middleware(PreventDoubleBooking::class);
     });
 
     Route::middleware(['auth:sanctum', 'role:admin,customer'])->group(function (): void {
         Route::get('/bookings', [BookingController::class, 'index']);
-        Route::put('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
-        Route::post('/bookings/{id}/payment', [PaymentController::class, 'store']);
-        Route::get('/payments/{id}', [PaymentController::class, 'show']);
+        Route::put('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
+        Route::post('/bookings/{booking}/payment', [PaymentController::class, 'store']);
+        Route::get('/payments/{payment}', [PaymentController::class, 'show']);
     });
 });

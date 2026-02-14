@@ -2,20 +2,25 @@
 
 namespace App\Services\Booking;
 
+use App\Contracts\Services\BookingServiceInterface;
+use App\Domain\Booking\BookingTransitionGuard;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\DTO\Booking\CreateBookingData;
+use App\Enums\BookingStatus;
 use App\Enums\Role;
 use App\Models\Booking;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class BookingService
+class BookingService implements BookingServiceInterface
 {
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function create(User $user, int $ticketId, array $data): Booking
+    public function __construct(private readonly BookingTransitionGuard $transitionGuard)
+    {
+    }
+
+    public function create(User $user, int $ticketId, CreateBookingData $data): Booking
     {
         $ticket = Ticket::query()->find($ticketId);
 
@@ -27,7 +32,7 @@ class BookingService
             throw new DomainException(DomainError::TICKET_SOLD_OUT);
         }
 
-        $quantity = (int) $data['quantity'];
+        $quantity = $data->quantity;
         if ($quantity > $ticket->quantity) {
             throw new DomainException(DomainError::NOT_ENOUGH_TICKET_INVENTORY);
         }
@@ -36,7 +41,7 @@ class BookingService
         $booking->user_id = $user->id;
         $booking->ticket_id = $ticket->id;
         $booking->quantity = $quantity;
-        $booking->status = 'pending';
+        $booking->status = BookingStatus::PENDING;
         $booking->save();
 
         return $booking;
@@ -67,11 +72,15 @@ class BookingService
 
     public function cancel(Booking $booking): Booking
     {
-        if ($booking->status !== 'pending') {
+        $currentStatus = $booking->status instanceof BookingStatus
+            ? $booking->status
+            : BookingStatus::from((string) $booking->status);
+
+        if (! $this->transitionGuard->canCancel($currentStatus)) {
             throw new DomainException(DomainError::BOOKING_NOT_PENDING);
         }
 
-        $booking->status = 'cancelled';
+        $booking->status = BookingStatus::CANCELLED;
         $booking->save();
 
         return $booking;

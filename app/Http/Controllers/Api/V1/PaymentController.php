@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Contracts\Services\PaymentTransactionServiceInterface;
+use App\DTO\Payment\ProcessPaymentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Payment\PaymentStoreRequest;
-use App\Services\Payment\PaymentTransactionService;
+use App\Http\Resources\Api\V1\PaymentResource;
+use App\Models\Booking;
+use App\Models\Payment;
 use App\Support\Http\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
@@ -12,27 +16,28 @@ class PaymentController extends Controller
 {
     use ApiResponse;
 
-    public function __construct(private readonly PaymentTransactionService $paymentService)
+    public function __construct(private readonly PaymentTransactionServiceInterface $paymentService)
     {
     }
 
-    public function store(int $id, PaymentStoreRequest $request): JsonResponse
+    public function store(Booking $booking, PaymentStoreRequest $request): JsonResponse
     {
         $forceSuccess = $request->input('force_success') === null
             ? null
             : $request->boolean('force_success');
 
-        $payment = $this->paymentService->process($request->user(), $id, $forceSuccess);
+        $payment = $this->paymentService->process(
+            $request->user(),
+            ProcessPaymentData::fromInput($booking->id, $forceSuccess)
+        );
 
-        return $this->created($payment, 'Payment processed successfully');
+        return $this->created(PaymentResource::make($payment)->resolve(), 'Payment processed successfully');
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Payment $payment): JsonResponse
     {
-        $payment = $this->paymentService->findOrFail($id);
-
         $this->authorize('view', $payment);
 
-        return $this->success($payment, 'OK');
+        return $this->success(PaymentResource::make($payment)->resolve(), 'OK');
     }
 }

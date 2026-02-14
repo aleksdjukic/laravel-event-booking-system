@@ -2,13 +2,16 @@
 
 namespace App\Services\Ticket;
 
+use App\Contracts\Services\TicketServiceInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\DTO\Ticket\CreateTicketData;
+use App\DTO\Ticket\UpdateTicketData;
 use App\Models\Event;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Cache;
 
-class TicketService
+class TicketService implements TicketServiceInterface
 {
     public function findEventOrFail(int $eventId): Event
     {
@@ -32,14 +35,11 @@ class TicketService
         return $ticket;
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function create(Event $event, array $data): Ticket
+    public function create(Event $event, CreateTicketData $data): Ticket
     {
         $duplicateTypeExists = Ticket::query()
             ->where('event_id', $event->id)
-            ->where('type', (string) $data['type'])
+            ->where('type', $data->type)
             ->exists();
 
         if ($duplicateTypeExists) {
@@ -48,9 +48,9 @@ class TicketService
 
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
-        $ticket->type = (string) $data['type'];
-        $ticket->price = number_format((float) $data['price'], 2, '.', '');
-        $ticket->quantity = (int) $data['quantity'];
+        $ticket->type = $data->type;
+        $ticket->price = number_format($data->price, 2, '.', '');
+        $ticket->quantity = $data->quantity;
         $ticket->save();
 
         $this->bumpEventIndexVersion();
@@ -58,12 +58,9 @@ class TicketService
         return $ticket;
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function update(Ticket $ticket, array $data): Ticket
+    public function update(Ticket $ticket, UpdateTicketData $data): Ticket
     {
-        $type = isset($data['type']) ? (string) $data['type'] : $ticket->type;
+        $type = $data->type ?? $ticket->type;
         $duplicateTypeExists = Ticket::query()
             ->where('event_id', $ticket->event_id)
             ->where('type', $type)
@@ -74,16 +71,16 @@ class TicketService
             throw new DomainException(DomainError::DUPLICATE_TICKET_TYPE);
         }
 
-        if (array_key_exists('type', $data)) {
-            $ticket->type = (string) $data['type'];
+        if ($data->type !== null) {
+            $ticket->type = $data->type;
         }
 
-        if (array_key_exists('price', $data)) {
-            $ticket->price = number_format((float) $data['price'], 2, '.', '');
+        if ($data->price !== null) {
+            $ticket->price = number_format($data->price, 2, '.', '');
         }
 
-        if (array_key_exists('quantity', $data)) {
-            $ticket->quantity = (int) $data['quantity'];
+        if ($data->quantity !== null) {
+            $ticket->quantity = $data->quantity;
         }
 
         $ticket->save();
