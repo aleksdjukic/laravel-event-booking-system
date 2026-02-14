@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\TicketStoreRequest;
-use App\Http\Requests\Api\V1\TicketUpdateRequest;
+use App\Http\Requests\Api\V1\Ticket\TicketStoreRequest;
+use App\Http\Requests\Api\V1\Ticket\TicketUpdateRequest;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Support\Http\ApiResponse;

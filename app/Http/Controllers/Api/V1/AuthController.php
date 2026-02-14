@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\LoginRequest;
-use App\Http\Requests\Api\V1\RegisterRequest;
+use App\Http\Requests\Api\V1\Auth\LoginRequest;
+use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Models\User;
 use App\Support\Http\ApiResponse;
 use Illuminate\Http\JsonResponse;

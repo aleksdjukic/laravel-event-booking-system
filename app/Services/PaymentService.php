@@ -6,8 +6,26 @@ use App\Models\Booking;
 
 class PaymentService
 {
-    public function process(Booking $booking, bool $forceSuccess = true): bool
+    private const SIMULATED_SUCCESS_RATE = 80;
+
+    public function process(Booking $booking, ?bool $forceSuccess = null): bool
     {
-        return $forceSuccess;
+        if ($forceSuccess !== null) {
+            return $forceSuccess;
+        }
+
+        return $this->simulateGatewayResult($booking);
+    }
+
+    private function simulateGatewayResult(Booking $booking): bool
+    {
+        $seed = crc32(implode('|', [
+            (string) $booking->id,
+            (string) $booking->ticket_id,
+            (string) $booking->user_id,
+            (string) $booking->quantity,
+        ]));
+
+        return ($seed % 100) < self::SIMULATED_SUCCESS_RATE;
     }
 }

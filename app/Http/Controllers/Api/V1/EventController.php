@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Event\EventIndexRequest;
+use App\Http\Requests\Api\V1\Event\EventStoreRequest;
+use App\Http\Requests\Api\V1\Event\EventUpdateRequest;
 use App\Models\Event;
 use App\Support\Http\ApiResponse;
 use App\Support\Traits\CommonQueryScopes;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class EventController extends Controller
@@ -15,15 +17,8 @@ class EventController extends Controller
     use ApiResponse;
     use CommonQueryScopes;
 
-    public function index(Request $request): JsonResponse
+    public function index(EventIndexRequest $request): JsonResponse
     {
-        $request->validate([
-            'date' => ['nullable', 'date'],
-            'search' => ['nullable', 'string', 'max:100'],
-            'location' => ['nullable', 'string', 'max:100'],
-            'page' => ['nullable', 'integer', 'min:1'],
-        ]);
-
         $page = (int) $request->query('page', 1);
         $queryKeys = array_keys($request->query());
         $nonCacheableKeys = array_diff($queryKeys, ['page']);
@@ -64,16 +59,11 @@ class EventController extends Controller
         return $this->success($event, 'OK');
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(EventStoreRequest $request): JsonResponse
     {
         $this->authorize('create', Event::class);
 
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'date' => ['required', 'date'],
-            'location' => ['required', 'string', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         $event = new Event();
         $event->title = $validated['title'];
@@ -86,7 +76,7 @@ class EventController extends Controller
         return $this->created($event, 'Event created successfully');
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(EventUpdateRequest $request, int $id): JsonResponse
     {
         $event = Event::query()->find($id);
 
@@ -96,12 +86,7 @@ class EventController extends Controller
 
         $this->authorize('update', $event);
 
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'date' => ['required', 'date'],
-            'location' => ['required', 'string', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         $event->title = $validated['title'];
         $event->description = $validated['description'] ?? null;

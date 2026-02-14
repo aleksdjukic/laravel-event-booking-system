@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\BookingStoreRequest;
+use App\Http\Requests\Api\V1\Booking\BookingStoreRequest;
 use App\Models\Booking;
 use App\Models\Ticket;
 use App\Support\Http\ApiResponse;

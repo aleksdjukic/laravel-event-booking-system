@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\PaymentStoreRequest;
+use App\Http\Requests\Api\V1\Payment\PaymentStoreRequest;
 use App\Models\Booking;
 use App\Models\Event;
 use App\Models\Payment;
@@ -27,7 +27,9 @@ class PaymentController extends Controller
 
     public function store(int $id, PaymentStoreRequest $request): JsonResponse
     {
-        $forceSuccess = $request->boolean('force_success', true);
+        $forceSuccess = $request->input('force_success') === null
+            ? null
+            : $request->boolean('force_success');
         $notificationPayload = null;
 
         DB::beginTransaction();
