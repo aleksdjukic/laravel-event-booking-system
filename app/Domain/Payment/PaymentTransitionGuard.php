@@ -2,7 +2,7 @@
 
 namespace App\Domain\Payment;
 
-use App\Enums\PaymentStatus;
+use App\Domain\Payment\Enums\PaymentStatus;
 
 class PaymentTransitionGuard
 {

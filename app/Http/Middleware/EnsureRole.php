@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Support\Http\ApiResponder;
 use Closure;
 use Illuminate\Http\Request;

@@ -5,7 +5,7 @@ namespace App\Domain\User\Models;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Payment\Models\Payment;
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;

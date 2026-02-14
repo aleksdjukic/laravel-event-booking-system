@@ -2,7 +2,7 @@
 
 namespace App\Domain\Event\Policies;
 
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
 

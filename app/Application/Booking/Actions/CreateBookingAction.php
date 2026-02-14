@@ -7,7 +7,7 @@ use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\Application\Booking\DTO\CreateBookingData;
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\User\Models\User;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Api\V1;
 
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

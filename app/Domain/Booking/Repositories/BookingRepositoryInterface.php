@@ -2,7 +2,7 @@
 
 namespace App\Domain\Booking\Repositories;
 
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;

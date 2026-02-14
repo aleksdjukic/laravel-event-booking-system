@@ -5,7 +5,7 @@ namespace App\Application\Services\Auth;
 use App\Application\Contracts\Services\AuthServiceInterface;
 use App\Application\Auth\DTO\LoginData;
 use App\Application\Auth\DTO\RegisterData;
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 

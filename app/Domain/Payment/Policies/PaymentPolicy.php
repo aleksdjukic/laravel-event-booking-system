@@ -2,7 +2,7 @@
 
 namespace App\Domain\Payment\Policies;
 
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\User\Models\User;
 

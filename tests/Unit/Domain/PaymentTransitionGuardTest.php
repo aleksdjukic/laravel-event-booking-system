@@ -3,7 +3,7 @@
 namespace Tests\Unit\Domain;
 
 use App\Domain\Payment\PaymentTransitionGuard;
-use App\Enums\PaymentStatus;
+use App\Domain\Payment\Enums\PaymentStatus;
 use PHPUnit\Framework\TestCase;
 
 class PaymentTransitionGuardTest extends TestCase

@@ -5,7 +5,7 @@ namespace App\Domain\Booking\Models;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Models\User;
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;

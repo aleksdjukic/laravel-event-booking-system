@@ -2,7 +2,7 @@
 
 namespace App\Domain\Booking\Policies;
 
-use App\Enums\Role;
+use App\Domain\User\Enums\Role;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\User\Models\User;
 

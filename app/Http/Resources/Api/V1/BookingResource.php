@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Api\V1;
 
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

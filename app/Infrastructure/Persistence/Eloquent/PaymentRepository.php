@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
-use App\Enums\PaymentStatus;
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Payment\Models\Payment;
 

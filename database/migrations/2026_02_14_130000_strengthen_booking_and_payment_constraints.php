@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;

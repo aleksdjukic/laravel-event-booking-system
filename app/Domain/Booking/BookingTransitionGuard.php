@@ -2,7 +2,7 @@
 
 namespace App\Domain\Booking;
 
-use App\Enums\BookingStatus;
+use App\Domain\Booking\Enums\BookingStatus;
 
 class BookingTransitionGuard
 {

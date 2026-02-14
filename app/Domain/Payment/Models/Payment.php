@@ -3,7 +3,7 @@
 namespace App\Domain\Payment\Models;
 
 use App\Domain\Booking\Models\Booking;
-use App\Enums\PaymentStatus;
+use App\Domain\Payment\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
