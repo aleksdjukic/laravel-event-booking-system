@@ -84,9 +84,14 @@ Status codes:
 ## Postman Usage
 - Include `Accept: application/json` on all requests.
 - Include `Authorization: Bearer {{token}}` on authenticated requests.
+- Optional payment idempotency: include `Idempotency-Key: <unique-key>` for `POST /api/v1/bookings/{id}/payment`.
 - `postman_collection.json` is provided in repo root.
 - Collection includes login requests for admin/organizer/customer users.
 - Login request test script stores token for follow-up protected calls.
+
+## OpenAPI / Swagger
+- OpenAPI spec is available at `openapi/openapi.yaml`.
+- You can import it into Swagger UI / Postman for contract browsing.
 
 ## Coverage (Optional)
 If Xdebug is installed:

@@ -15,6 +15,7 @@ Route::prefix('v1')->group(function (): void {
             'success' => true,
             'message' => 'ok',
             'data' => null,
+            'errors' => null,
         ]);
     });
 

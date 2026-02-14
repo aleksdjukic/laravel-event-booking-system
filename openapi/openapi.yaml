@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Event Booking System API
+  version: 1.0.0
+  description: Laravel backend for event booking with auth, RBAC, bookings, payments and idempotency.
+servers:
+  - url: /api/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 128
+      description: Reusing same key for same user+booking returns previous payment response.
+  schemas:
+    ApiEnvelope:
+      type: object
+      required: [success, message, data, errors]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          nullable: true
+        errors:
+          nullable: true
+paths:
+  /auth/register:
+    post:
+      summary: Register customer
+      responses:
+        '201':
+          description: Registered
+  /auth/login:
+    post:
+      summary: Login
+      responses:
+        '200':
+          description: Logged in
+  /events:
+    get:
+      summary: List events
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: date
+          schema: { type: string, format: date }
+        - in: query
+          name: location
+          schema: { type: string }
+      responses:
+        '200':
+          description: Events list
+    post:
+      summary: Create event
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Created
+  /bookings/{booking}/payment:
+    post:
+      summary: Process payment
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Payment processed or idempotent replay
+        '409':
+          description: Conflict (already paid, invalid state, idempotency key reuse)
