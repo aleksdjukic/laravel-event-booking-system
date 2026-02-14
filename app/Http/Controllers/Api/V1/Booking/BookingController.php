@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Booking;
 
 use App\Application\Contracts\Services\BookingServiceInterface;
 use App\Application\Booking\DTO\CreateBookingData;

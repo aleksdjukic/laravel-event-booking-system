@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Event;
 
 use App\Application\Contracts\Services\EventServiceInterface;
 use App\Application\Event\DTO\CreateEventData;

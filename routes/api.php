@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\BookingController;
-use App\Http\Controllers\Api\V1\EventController;
-use App\Http\Controllers\Api\V1\PaymentController;
-use App\Http\Controllers\Api\V1\TicketController;
-use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Booking\BookingController;
+use App\Http\Controllers\Api\V1\Event\EventController;
+use App\Http\Controllers\Api\V1\Payment\PaymentController;
+use App\Http\Controllers\Api\V1\Ticket\TicketController;
+use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Middleware\PreventDoubleBooking;
 
 Route::prefix('v1')->group(function (): void {

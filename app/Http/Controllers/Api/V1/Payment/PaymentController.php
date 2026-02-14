@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Payment;
 
 use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Application\Payment\DTO\ProcessPaymentData;

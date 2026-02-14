@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Application\Contracts\Services\AuthServiceInterface;
 use App\Application\Auth\DTO\LoginData;
