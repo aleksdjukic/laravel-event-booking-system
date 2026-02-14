@@ -4,10 +4,9 @@ namespace App\Application\Services\Booking;
 
 use App\Application\Booking\Actions\CancelBookingAction;
 use App\Application\Booking\Actions\CreateBookingAction;
+use App\Application\Booking\Actions\FindBookingAction;
 use App\Application\Contracts\Services\BookingServiceInterface;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
-use App\Domain\Shared\DomainError;
-use App\Domain\Shared\DomainException;
 use App\Application\Booking\DTO\CreateBookingData;
 use App\Domain\User\Enums\Role;
 use App\Domain\Booking\Models\Booking;
@@ -20,6 +19,7 @@ class BookingService implements BookingServiceInterface
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly CreateBookingAction $createBookingAction,
         private readonly CancelBookingAction $cancelBookingAction,
+        private readonly FindBookingAction $findBookingAction,
     ) {
     }
 
@@ -41,13 +41,7 @@ class BookingService implements BookingServiceInterface
 
     public function findOrFail(int $id): Booking
     {
-        $booking = $this->bookingRepository->find($id);
-
-        if ($booking === null) {
-            throw new DomainException(DomainError::BOOKING_NOT_FOUND);
-        }
-
-        return $booking;
+        return $this->findBookingAction->execute($id);
     }
 
     public function cancel(Booking $booking): Booking
