@@ -2,7 +2,7 @@
 
 namespace App\Domain\Payment\Repositories;
 
-use App\Models\PaymentIdempotencyKey;
+use App\Domain\Payment\Models\PaymentIdempotencyKey;
 
 interface PaymentIdempotencyRepositoryInterface
 {

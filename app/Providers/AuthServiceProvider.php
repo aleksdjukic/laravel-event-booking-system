@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Booking;
-use App\Models\Event;
-use App\Models\Payment;
-use App\Models\Ticket;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\Event\Models\Event;
+use App\Domain\Payment\Models\Payment;
+use App\Domain\Ticket\Models\Ticket;
 use App\Domain\Booking\Policies\BookingPolicy;
 use App\Domain\Event\Policies\EventPolicy;
 use App\Domain\Payment\Policies\PaymentPolicy;

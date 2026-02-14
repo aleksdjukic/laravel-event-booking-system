@@ -8,11 +8,11 @@ use App\Domain\Booking\BookingTransitionGuard;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
-use App\DTO\Booking\CreateBookingData;
+use App\Application\Booking\DTO\CreateBookingData;
 use App\Enums\BookingStatus;
 use App\Enums\Role;
-use App\Models\Booking;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookingService implements BookingServiceInterface

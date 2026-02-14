@@ -3,9 +3,9 @@
 namespace App\Domain\Ticket\Policies;
 
 use App\Enums\Role;
-use App\Models\Event;
-use App\Models\Ticket;
-use App\Models\User;
+use App\Domain\Event\Models\Event;
+use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Models\User;
 
 class TicketPolicy
 {

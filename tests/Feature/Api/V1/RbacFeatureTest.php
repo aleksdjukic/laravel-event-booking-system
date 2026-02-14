@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Event;
-use App\Models\Ticket;
-use App\Models\User;
+use App\Domain\Event\Models\Event;
+use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;

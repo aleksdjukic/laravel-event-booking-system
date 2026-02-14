@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Contracts\Services\AuthServiceInterface;
-use App\DTO\Auth\LoginData;
-use App\DTO\Auth\RegisterData;
+use App\Application\Auth\DTO\LoginData;
+use App\Application\Auth\DTO\RegisterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;

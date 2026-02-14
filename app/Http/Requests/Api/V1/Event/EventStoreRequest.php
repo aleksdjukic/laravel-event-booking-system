@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Event;
 
-use App\Models\Event;
+use App\Domain\Event\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventStoreRequest extends FormRequest

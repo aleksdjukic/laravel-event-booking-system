@@ -6,10 +6,10 @@ use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
-use App\DTO\Booking\CreateBookingData;
+use App\Application\Booking\DTO\CreateBookingData;
 use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 
 class CreateBookingAction
 {

@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Api\V1;
 
 use App\Enums\PaymentStatus;
-use App\Models\Payment;
+use App\Domain\Payment\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -2,8 +2,8 @@
 
 namespace App\Domain\Ticket\Repositories;
 
-use App\Models\Event;
-use App\Models\Ticket;
+use App\Domain\Event\Models\Event;
+use App\Domain\Ticket\Models\Ticket;
 
 interface TicketRepositoryInterface
 {

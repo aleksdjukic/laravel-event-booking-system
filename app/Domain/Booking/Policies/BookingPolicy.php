@@ -3,8 +3,8 @@
 namespace App\Domain\Booking\Policies;
 
 use App\Enums\Role;
-use App\Models\Booking;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 
 class BookingPolicy
 {

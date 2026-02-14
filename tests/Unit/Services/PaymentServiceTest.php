@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Services;
 
-use App\Models\Booking;
+use App\Domain\Booking\Models\Booking;
 use App\Services\Payment\PaymentGatewayService;
 use PHPUnit\Framework\TestCase;
 

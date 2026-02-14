@@ -3,8 +3,8 @@
 namespace App\Domain\Payment\Repositories;
 
 use App\Enums\PaymentStatus;
-use App\Models\Booking;
-use App\Models\Payment;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\Payment\Models\Payment;
 
 interface PaymentRepositoryInterface
 {

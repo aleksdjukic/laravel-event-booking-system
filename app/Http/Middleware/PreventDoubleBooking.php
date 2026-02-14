@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\BookingStatus;
-use App\Models\Booking;
+use App\Domain\Booking\Models\Booking;
 use App\Support\Http\ApiResponder;
 use Closure;
 use Illuminate\Http\Request;

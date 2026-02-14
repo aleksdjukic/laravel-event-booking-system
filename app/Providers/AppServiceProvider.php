@@ -12,7 +12,7 @@ use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
-use App\Models\Event;
+use App\Domain\Event\Models\Event;
 use App\Observers\EventObserver;
 use App\Repositories\Eloquent\BookingRepository;
 use App\Services\Auth\AuthService;

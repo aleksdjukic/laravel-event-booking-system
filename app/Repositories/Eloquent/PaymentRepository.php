@@ -4,8 +4,8 @@ namespace App\Repositories\Eloquent;
 
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Enums\PaymentStatus;
-use App\Models\Booking;
-use App\Models\Payment;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\Payment\Models\Payment;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {

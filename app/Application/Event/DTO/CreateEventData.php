@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Event;
+namespace App\Application\Event\DTO;
 
 class CreateEventData
 {

@@ -2,7 +2,7 @@
 
 namespace App\Services\Payment;
 
-use App\Models\Booking;
+use App\Domain\Booking\Models\Booking;
 
 class PaymentGatewayService
 {

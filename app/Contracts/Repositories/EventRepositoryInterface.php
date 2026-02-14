@@ -2,11 +2,11 @@
 
 namespace App\Contracts\Repositories;
 
-use App\DTO\Event\CreateEventData;
-use App\DTO\Event\EventIndexData;
-use App\DTO\Event\UpdateEventData;
-use App\Models\Event;
-use App\Models\User;
+use App\Application\Event\DTO\CreateEventData;
+use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\UpdateEventData;
+use App\Domain\Event\Models\Event;
+use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface EventRepositoryInterface

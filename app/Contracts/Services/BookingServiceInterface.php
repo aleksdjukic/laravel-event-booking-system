@@ -2,9 +2,9 @@
 
 namespace App\Contracts\Services;
 
-use App\DTO\Booking\CreateBookingData;
-use App\Models\Booking;
-use App\Models\User;
+use App\Application\Booking\DTO\CreateBookingData;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BookingServiceInterface

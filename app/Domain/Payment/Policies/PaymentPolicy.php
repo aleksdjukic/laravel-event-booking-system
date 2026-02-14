@@ -3,8 +3,8 @@
 namespace App\Domain\Payment\Policies;
 
 use App\Enums\Role;
-use App\Models\Payment;
-use App\Models\User;
+use App\Domain\Payment\Models\Payment;
+use App\Domain\User\Models\User;
 
 class PaymentPolicy
 {

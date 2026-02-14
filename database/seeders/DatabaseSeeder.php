@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Booking;
-use App\Models\Ticket;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

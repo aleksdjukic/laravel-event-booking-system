@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Payment;
+namespace App\Application\Payment\DTO;
 
 class ProcessPaymentData
 {

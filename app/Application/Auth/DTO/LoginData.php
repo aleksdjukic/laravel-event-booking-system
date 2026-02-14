@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Auth;
+namespace App\Application\Auth\DTO;
 
 class LoginData
 {

@@ -3,8 +3,8 @@
 namespace App\Domain\Booking\Repositories;
 
 use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BookingRepositoryInterface

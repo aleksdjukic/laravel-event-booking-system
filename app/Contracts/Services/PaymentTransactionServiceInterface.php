@@ -2,9 +2,9 @@
 
 namespace App\Contracts\Services;
 
-use App\DTO\Payment\ProcessPaymentData;
-use App\Models\Payment;
-use App\Models\User;
+use App\Application\Payment\DTO\ProcessPaymentData;
+use App\Domain\Payment\Models\Payment;
+use App\Domain\User\Models\User;
 
 interface PaymentTransactionServiceInterface
 {

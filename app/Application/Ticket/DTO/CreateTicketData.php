@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Ticket;
+namespace App\Application\Ticket\DTO;
 
 class CreateTicketData
 {

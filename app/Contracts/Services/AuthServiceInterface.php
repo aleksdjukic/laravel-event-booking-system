@@ -2,9 +2,9 @@
 
 namespace App\Contracts\Services;
 
-use App\DTO\Auth\LoginData;
-use App\DTO\Auth\RegisterData;
-use App\Models\User;
+use App\Application\Auth\DTO\LoginData;
+use App\Application\Auth\DTO\RegisterData;
+use App\Domain\User\Models\User;
 
 interface AuthServiceInterface
 {

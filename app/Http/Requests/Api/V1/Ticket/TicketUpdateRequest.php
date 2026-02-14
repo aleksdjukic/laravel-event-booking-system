@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Ticket;
 
-use App\Models\Ticket;
+use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TicketUpdateRequest extends FormRequest

@@ -2,10 +2,10 @@
 
 namespace App\Contracts\Services;
 
-use App\DTO\Ticket\CreateTicketData;
-use App\DTO\Ticket\UpdateTicketData;
-use App\Models\Event;
-use App\Models\Ticket;
+use App\Application\Ticket\DTO\CreateTicketData;
+use App\Application\Ticket\DTO\UpdateTicketData;
+use App\Domain\Event\Models\Event;
+use App\Domain\Ticket\Models\Ticket;
 
 interface TicketServiceInterface
 {

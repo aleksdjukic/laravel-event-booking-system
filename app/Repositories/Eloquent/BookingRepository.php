@@ -4,8 +4,8 @@ namespace App\Repositories\Eloquent;
 
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\User;
+use App\Domain\Booking\Models\Booking;
+use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookingRepository implements BookingRepositoryInterface

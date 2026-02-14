@@ -7,9 +7,9 @@ use App\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
-use App\DTO\Payment\ProcessPaymentData;
-use App\Models\Payment;
-use App\Models\User;
+use App\Application\Payment\DTO\ProcessPaymentData;
+use App\Domain\Payment\Models\Payment;
+use App\Domain\User\Models\User;
 
 class PaymentTransactionService implements PaymentTransactionServiceInterface
 {

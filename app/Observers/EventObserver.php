@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Event;
+use App\Domain\Event\Models\Event;
 use Illuminate\Support\Facades\Cache;
 
 class EventObserver

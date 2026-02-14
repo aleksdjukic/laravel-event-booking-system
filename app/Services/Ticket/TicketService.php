@@ -6,10 +6,10 @@ use App\Contracts\Services\TicketServiceInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
-use App\DTO\Ticket\CreateTicketData;
-use App\DTO\Ticket\UpdateTicketData;
-use App\Models\Event;
-use App\Models\Ticket;
+use App\Application\Ticket\DTO\CreateTicketData;
+use App\Application\Ticket\DTO\UpdateTicketData;
+use App\Domain\Event\Models\Event;
+use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Support\Facades\Cache;
 
 class TicketService implements TicketServiceInterface

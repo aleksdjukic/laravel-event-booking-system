@@ -3,7 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
-use App\Models\PaymentIdempotencyKey;
+use App\Domain\Payment\Models\PaymentIdempotencyKey;
 
 class PaymentIdempotencyRepository implements PaymentIdempotencyRepositoryInterface
 {

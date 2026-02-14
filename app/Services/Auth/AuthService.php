@@ -3,10 +3,10 @@
 namespace App\Services\Auth;
 
 use App\Contracts\Services\AuthServiceInterface;
-use App\DTO\Auth\LoginData;
-use App\DTO\Auth\RegisterData;
+use App\Application\Auth\DTO\LoginData;
+use App\Application\Auth\DTO\RegisterData;
 use App\Enums\Role;
-use App\Models\User;
+use App\Domain\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService implements AuthServiceInterface
