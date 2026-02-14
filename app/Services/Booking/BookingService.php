@@ -2,12 +2,12 @@
 
 namespace App\Services\Booking;
 
+use App\Application\Booking\Actions\CreateBookingAction;
 use App\Contracts\Services\BookingServiceInterface;
 use App\Domain\Booking\BookingTransitionGuard;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
-use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\DTO\Booking\CreateBookingData;
 use App\Enums\BookingStatus;
 use App\Enums\Role;
@@ -20,28 +20,13 @@ class BookingService implements BookingServiceInterface
     public function __construct(
         private readonly BookingTransitionGuard $transitionGuard,
         private readonly BookingRepositoryInterface $bookingRepository,
-        private readonly TicketRepositoryInterface $ticketRepository,
+        private readonly CreateBookingAction $createBookingAction,
     ) {
     }
 
     public function create(User $user, int $ticketId, CreateBookingData $data): Booking
     {
-        $ticket = $this->ticketRepository->find($ticketId);
-
-        if ($ticket === null) {
-            throw new DomainException(DomainError::TICKET_NOT_FOUND);
-        }
-
-        if ($ticket->quantity <= 0) {
-            throw new DomainException(DomainError::TICKET_SOLD_OUT);
-        }
-
-        $quantity = $data->quantity;
-        if ($quantity > $ticket->quantity) {
-            throw new DomainException(DomainError::NOT_ENOUGH_TICKET_INVENTORY);
-        }
-
-        return $this->bookingRepository->create($user, $ticket->id, $quantity, BookingStatus::PENDING);
+        return $this->createBookingAction->execute($user, $ticketId, $data);
     }
 
     /**
