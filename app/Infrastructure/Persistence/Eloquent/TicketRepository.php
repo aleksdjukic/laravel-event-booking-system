@@ -18,6 +18,15 @@ class TicketRepository implements TicketRepositoryInterface
         return Ticket::query()->whereKey($id)->lockForUpdate()->first();
     }
 
+    public function findForUpdateWithEvent(int $id): ?Ticket
+    {
+        return Ticket::query()
+            ->with('event')
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->first();
+    }
+
     public function duplicateTypeExists(int $eventId, string $type, ?int $excludeTicketId = null): bool
     {
         $query = Ticket::query()

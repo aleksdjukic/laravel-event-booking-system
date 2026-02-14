@@ -15,7 +15,6 @@ use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\User\Enums\Role;
 use App\Domain\Booking\Models\Booking;
-use App\Domain\Event\Models\Event;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Payment\Models\PaymentIdempotencyKey;
 use App\Domain\Ticket\Models\Ticket;
@@ -63,7 +62,7 @@ class ProcessPaymentAction
             $this->ensureCanProcess($user, $booking);
             $this->ensureBookingCanBePaid($booking);
 
-            $ticket = $this->ticketRepository->findForUpdate($booking->ticket_id);
+            $ticket = $this->ticketRepository->findForUpdateWithEvent($booking->ticket_id);
 
             if ($ticket === null) {
                 throw new DomainException(DomainError::TICKET_NOT_FOUND);
@@ -83,7 +82,7 @@ class ProcessPaymentAction
 
                 $notificationPayload = [
                     'booking_id' => $booking->id,
-                    'event_title' => Event::query()->whereKey($ticket->event_id)->value('title'),
+                    'event_title' => $ticket->event?->title,
                     'ticket_type' => $ticket->type,
                     'quantity' => (int) $booking->quantity,
                 ];

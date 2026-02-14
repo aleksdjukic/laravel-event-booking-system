@@ -11,6 +11,8 @@ interface TicketRepositoryInterface
 
     public function findForUpdate(int $id): ?Ticket;
 
+    public function findForUpdateWithEvent(int $id): ?Ticket;
+
     public function duplicateTypeExists(int $eventId, string $type, ?int $excludeTicketId = null): bool;
 
     public function create(Event $event, string $type, float $price, int $quantity): Ticket;
