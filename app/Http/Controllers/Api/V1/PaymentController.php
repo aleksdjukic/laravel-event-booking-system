@@ -25,10 +25,12 @@ class PaymentController extends Controller
         $forceSuccess = $request->input('force_success') === null
             ? null
             : $request->boolean('force_success');
+        $idempotencyKey = $request->header('Idempotency-Key');
+        $idempotencyKey = is_string($idempotencyKey) && $idempotencyKey !== '' ? $idempotencyKey : null;
 
         $payment = $this->paymentService->process(
             $request->user(),
-            ProcessPaymentData::fromInput($booking->id, $forceSuccess)
+            ProcessPaymentData::fromInput($booking->id, $forceSuccess, $idempotencyKey)
         );
 
         return $this->responder->created(PaymentResource::make($payment), 'Payment processed successfully');

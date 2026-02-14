@@ -4,6 +4,7 @@ namespace App\Application\Payment\Actions;
 
 use App\Domain\Booking\BookingTransitionGuard;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
+use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
 use App\Domain\Payment\PaymentTransitionGuard;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Shared\DomainError;
@@ -16,6 +17,7 @@ use App\Enums\Role;
 use App\Models\Booking;
 use App\Models\Event;
 use App\Models\Payment;
+use App\Models\PaymentIdempotencyKey;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\BookingConfirmedNotification;
@@ -32,11 +34,21 @@ class ProcessPaymentAction
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly TicketRepositoryInterface $ticketRepository,
         private readonly PaymentRepositoryInterface $paymentRepository,
+        private readonly PaymentIdempotencyRepositoryInterface $idempotencyRepository,
     ) {
     }
 
     public function execute(User $user, ProcessPaymentData $data): Payment
     {
+        $idempotencyRecord = $this->resolveIdempotencyRecord($user, $data);
+        if ($idempotencyRecord?->payment_id !== null) {
+            $existingPayment = $this->paymentRepository->findWithBooking((int) $idempotencyRecord->payment_id);
+
+            if ($existingPayment !== null) {
+                return $existingPayment;
+            }
+        }
+
         $notificationPayload = null;
 
         DB::beginTransaction();
@@ -84,6 +96,9 @@ class ProcessPaymentAction
             }
 
             $payment = $this->paymentRepository->create($booking, $amount, $paymentStatus);
+            if ($idempotencyRecord !== null) {
+                $this->idempotencyRepository->attachPayment($idempotencyRecord, (int) $payment->id);
+            }
             DB::commit();
 
             if ($this->paymentTransitionGuard->canNotifyCustomer($payment->status) && is_array($notificationPayload)) {
@@ -167,5 +182,28 @@ class ProcessPaymentAction
         $hasUniqueHint = str_contains($message, 'unique') || str_contains($message, 'duplicate');
 
         return $hasBookingIdColumn && $hasUniqueHint;
+    }
+
+    private function resolveIdempotencyRecord(User $user, ProcessPaymentData $data): ?PaymentIdempotencyKey
+    {
+        if ($data->idempotencyKey === null) {
+            return null;
+        }
+
+        $record = $this->idempotencyRepository->findForUserByKey($user->id, $data->idempotencyKey);
+        if ($record !== null) {
+            if ((int) $record->booking_id !== $data->bookingId) {
+                throw new DomainException(DomainError::IDEMPOTENCY_KEY_REUSED);
+            }
+
+            return $record;
+        }
+
+        $createdRecord = $this->idempotencyRepository->createPending($user->id, $data->bookingId, $data->idempotencyKey);
+        if ((int) $createdRecord->booking_id !== $data->bookingId) {
+            throw new DomainException(DomainError::IDEMPOTENCY_KEY_REUSED);
+        }
+
+        return $createdRecord;
     }
 }
