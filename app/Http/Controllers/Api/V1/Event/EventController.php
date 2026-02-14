@@ -7,9 +7,9 @@ use App\Application\Event\DTO\CreateEventData;
 use App\Application\Event\DTO\EventIndexData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Event\EventIndexRequest;
-use App\Http\Requests\Api\V1\Event\EventStoreRequest;
-use App\Http\Requests\Api\V1\Event\EventUpdateRequest;
+use App\Http\Requests\Api\V1\Event\ListEventsRequest;
+use App\Http\Requests\Api\V1\Event\CreateEventRequest;
+use App\Http\Requests\Api\V1\Event\UpdateEventRequest;
 use App\Http\Resources\Api\V1\Event\EventResource;
 use App\Domain\Event\Models\Event;
 use App\Support\Http\ApiResponder;
@@ -23,7 +23,7 @@ class EventController extends Controller
     ) {
     }
 
-    public function index(EventIndexRequest $request): JsonResponse
+    public function index(ListEventsRequest $request): JsonResponse
     {
         $events = $this->eventService->index(EventIndexData::fromArray($request->validated()));
 
@@ -37,7 +37,7 @@ class EventController extends Controller
         return $this->responder->success(EventResource::make($event), 'OK');
     }
 
-    public function store(EventStoreRequest $request): JsonResponse
+    public function store(CreateEventRequest $request): JsonResponse
     {
         $event = $this->eventService->create(
             $request->user(),
@@ -47,7 +47,7 @@ class EventController extends Controller
         return $this->responder->created(EventResource::make($event), 'Event created successfully');
     }
 
-    public function update(EventUpdateRequest $request, Event $event): JsonResponse
+    public function update(UpdateEventRequest $request, Event $event): JsonResponse
     {
         $event = $this->eventService->update($event, UpdateEventData::fromArray($request->validated()));
 

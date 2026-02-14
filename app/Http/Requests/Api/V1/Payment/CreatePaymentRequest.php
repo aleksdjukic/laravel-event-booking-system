@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PaymentStoreRequest extends FormRequest
+class CreatePaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {

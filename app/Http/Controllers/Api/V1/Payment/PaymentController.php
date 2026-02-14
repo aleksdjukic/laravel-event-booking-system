@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Payment;
 use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Application\Payment\DTO\ProcessPaymentData;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Payment\PaymentStoreRequest;
+use App\Http\Requests\Api\V1\Payment\CreatePaymentRequest;
 use App\Http\Resources\Api\V1\Payment\PaymentResource;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Payment\Models\Payment;
@@ -20,7 +20,7 @@ class PaymentController extends Controller
     ) {
     }
 
-    public function store(Booking $booking, PaymentStoreRequest $request): JsonResponse
+    public function store(Booking $booking, CreatePaymentRequest $request): JsonResponse
     {
         $forceSuccess = $request->input('force_success') === null
             ? null

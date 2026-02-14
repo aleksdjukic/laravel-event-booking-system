@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Event;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EventIndexRequest extends FormRequest
+class ListEventsRequest extends FormRequest
 {
     public function authorize(): bool
     {

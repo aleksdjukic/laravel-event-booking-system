@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1\Booking;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BookingStoreRequest extends FormRequest
+class CreateBookingRequest extends FormRequest
 {
     public function authorize(): bool
     {

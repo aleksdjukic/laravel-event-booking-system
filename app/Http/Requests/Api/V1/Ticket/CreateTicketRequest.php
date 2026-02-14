@@ -6,7 +6,7 @@ use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketStoreRequest extends FormRequest
+class CreateTicketRequest extends FormRequest
 {
     public function authorize(): bool
     {

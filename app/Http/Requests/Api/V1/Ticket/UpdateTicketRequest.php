@@ -5,7 +5,7 @@ namespace App\Http\Requests\Api\V1\Ticket;
 use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketUpdateRequest extends FormRequest
+class UpdateTicketRequest extends FormRequest
 {
     public function authorize(): bool
     {
