@@ -4,25 +4,29 @@ namespace App\Services\Booking;
 
 use App\Contracts\Services\BookingServiceInterface;
 use App\Domain\Booking\BookingTransitionGuard;
+use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\DTO\Booking\CreateBookingData;
 use App\Enums\BookingStatus;
 use App\Enums\Role;
 use App\Models\Booking;
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookingService implements BookingServiceInterface
 {
-    public function __construct(private readonly BookingTransitionGuard $transitionGuard)
-    {
+    public function __construct(
+        private readonly BookingTransitionGuard $transitionGuard,
+        private readonly BookingRepositoryInterface $bookingRepository,
+        private readonly TicketRepositoryInterface $ticketRepository,
+    ) {
     }
 
     public function create(User $user, int $ticketId, CreateBookingData $data): Booking
     {
-        $ticket = Ticket::query()->find($ticketId);
+        $ticket = $this->ticketRepository->find($ticketId);
 
         if ($ticket === null) {
             throw new DomainException(DomainError::TICKET_NOT_FOUND);
@@ -37,14 +41,7 @@ class BookingService implements BookingServiceInterface
             throw new DomainException(DomainError::NOT_ENOUGH_TICKET_INVENTORY);
         }
 
-        $booking = new Booking();
-        $booking->user_id = $user->id;
-        $booking->ticket_id = $ticket->id;
-        $booking->quantity = $quantity;
-        $booking->status = BookingStatus::PENDING;
-        $booking->save();
-
-        return $booking;
+        return $this->bookingRepository->create($user, $ticket->id, $quantity, BookingStatus::PENDING);
     }
 
     /**
@@ -52,19 +49,15 @@ class BookingService implements BookingServiceInterface
      */
     public function listFor(User $user): LengthAwarePaginator
     {
-        $query = Booking::query()->with(['ticket', 'payment']);
         $role = $user->role instanceof Role ? $user->role->value : (string) $user->role;
+        $all = $role !== Role::CUSTOMER->value;
 
-        if ($role === Role::CUSTOMER->value) {
-            $query->where('user_id', $user->id);
-        }
-
-        return $query->paginate();
+        return $this->bookingRepository->paginateForUser($user, $all);
     }
 
     public function findOrFail(int $id): Booking
     {
-        $booking = Booking::query()->find($id);
+        $booking = $this->bookingRepository->find($id);
 
         if ($booking === null) {
             throw new DomainException(DomainError::BOOKING_NOT_FOUND);
@@ -84,8 +77,7 @@ class BookingService implements BookingServiceInterface
         }
 
         $booking->status = BookingStatus::CANCELLED;
-        $booking->save();
 
-        return $booking;
+        return $this->bookingRepository->save($booking);
     }
 }

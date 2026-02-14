@@ -5,6 +5,7 @@ namespace App\Services\Ticket;
 use App\Contracts\Services\TicketServiceInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\DTO\Ticket\CreateTicketData;
 use App\DTO\Ticket\UpdateTicketData;
 use App\Models\Event;
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Cache;
 
 class TicketService implements TicketServiceInterface
 {
+    public function __construct(private readonly TicketRepositoryInterface $ticketRepository)
+    {
+    }
+
     public function findEventOrFail(int $eventId): Event
     {
         $event = Event::query()->find($eventId);
@@ -26,7 +31,7 @@ class TicketService implements TicketServiceInterface
 
     public function findTicketOrFail(int $id): Ticket
     {
-        $ticket = Ticket::query()->find($id);
+        $ticket = $this->ticketRepository->find($id);
 
         if ($ticket === null) {
             throw new DomainException(DomainError::TICKET_NOT_FOUND);
@@ -37,21 +42,11 @@ class TicketService implements TicketServiceInterface
 
     public function create(Event $event, CreateTicketData $data): Ticket
     {
-        $duplicateTypeExists = Ticket::query()
-            ->where('event_id', $event->id)
-            ->where('type', $data->type)
-            ->exists();
-
-        if ($duplicateTypeExists) {
+        if ($this->ticketRepository->duplicateTypeExists($event->id, $data->type)) {
             throw new DomainException(DomainError::DUPLICATE_TICKET_TYPE);
         }
 
-        $ticket = new Ticket();
-        $ticket->event_id = $event->id;
-        $ticket->type = $data->type;
-        $ticket->price = round($data->price, 2);
-        $ticket->quantity = $data->quantity;
-        $ticket->save();
+        $ticket = $this->ticketRepository->create($event, $data->type, $data->price, $data->quantity);
 
         $this->bumpEventIndexVersion();
 
@@ -61,13 +56,7 @@ class TicketService implements TicketServiceInterface
     public function update(Ticket $ticket, UpdateTicketData $data): Ticket
     {
         $type = $data->type ?? $ticket->type;
-        $duplicateTypeExists = Ticket::query()
-            ->where('event_id', $ticket->event_id)
-            ->where('type', $type)
-            ->where('id', '!=', $ticket->id)
-            ->exists();
-
-        if ($duplicateTypeExists) {
+        if ($this->ticketRepository->duplicateTypeExists($ticket->event_id, $type, $ticket->id)) {
             throw new DomainException(DomainError::DUPLICATE_TICKET_TYPE);
         }
 
@@ -83,7 +72,7 @@ class TicketService implements TicketServiceInterface
             $ticket->quantity = $data->quantity;
         }
 
-        $ticket->save();
+        $this->ticketRepository->save($ticket);
         $this->bumpEventIndexVersion();
 
         return $ticket;
@@ -91,7 +80,7 @@ class TicketService implements TicketServiceInterface
 
     public function delete(Ticket $ticket): void
     {
-        $ticket->delete();
+        $this->ticketRepository->delete($ticket);
         $this->bumpEventIndexVersion();
     }
 

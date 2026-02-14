@@ -4,9 +4,12 @@ namespace App\Services\Payment;
 
 use App\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Domain\Booking\BookingTransitionGuard;
+use App\Domain\Booking\Repositories\BookingRepositoryInterface;
+use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Payment\PaymentTransitionGuard;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
+use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\DTO\Payment\ProcessPaymentData;
 use App\Enums\BookingStatus;
 use App\Enums\PaymentStatus;
@@ -26,12 +29,15 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
         private readonly PaymentGatewayService $gatewayService,
         private readonly BookingTransitionGuard $bookingTransitionGuard,
         private readonly PaymentTransitionGuard $paymentTransitionGuard,
+        private readonly BookingRepositoryInterface $bookingRepository,
+        private readonly TicketRepositoryInterface $ticketRepository,
+        private readonly PaymentRepositoryInterface $paymentRepository,
     ) {
     }
 
     public function findOrFail(int $id): Payment
     {
-        $payment = Payment::query()->with('booking')->find($id);
+        $payment = $this->paymentRepository->findWithBooking($id);
 
         if ($payment === null) {
             throw new DomainException(DomainError::PAYMENT_NOT_FOUND);
@@ -47,7 +53,7 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
         DB::beginTransaction();
 
         try {
-            $booking = Booking::query()->whereKey($data->bookingId)->lockForUpdate()->first();
+            $booking = $this->bookingRepository->findForUpdate($data->bookingId);
 
             if ($booking === null) {
                 throw new DomainException(DomainError::BOOKING_NOT_FOUND);
@@ -56,7 +62,7 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
             $this->ensureCanProcess($user, $booking);
             $this->ensureBookingCanBePaid($booking);
 
-            $ticket = Ticket::query()->whereKey($booking->ticket_id)->lockForUpdate()->first();
+            $ticket = $this->ticketRepository->findForUpdate($booking->ticket_id);
 
             if ($ticket === null) {
                 throw new DomainException(DomainError::TICKET_NOT_FOUND);
@@ -67,16 +73,12 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
             $amount = round(((float) $ticket->price) * (int) $booking->quantity, 2);
             $processed = $this->gatewayService->process($booking, $data->forceSuccess);
 
-            $payment = new Payment();
-            $payment->booking_id = $booking->id;
-            $payment->amount = $amount;
-
             if ($processed) {
                 $ticket->quantity = $ticket->quantity - $booking->quantity;
-                $ticket->save();
+                $this->ticketRepository->save($ticket);
 
                 $booking->status = BookingStatus::CONFIRMED;
-                $booking->save();
+                $this->bookingRepository->save($booking);
 
                 $notificationPayload = [
                     'booking_id' => $booking->id,
@@ -85,14 +87,14 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
                     'quantity' => (int) $booking->quantity,
                 ];
 
-                $payment->status = PaymentStatus::SUCCESS;
+                $paymentStatus = PaymentStatus::SUCCESS;
             } else {
                 $booking->status = BookingStatus::CANCELLED;
-                $booking->save();
-                $payment->status = PaymentStatus::FAILED;
+                $this->bookingRepository->save($booking);
+                $paymentStatus = PaymentStatus::FAILED;
             }
 
-            $payment->save();
+            $payment = $this->paymentRepository->create($booking, $amount, $paymentStatus);
             DB::commit();
 
             if ($this->paymentTransitionGuard->canNotifyCustomer($payment->status) && is_array($notificationPayload)) {
@@ -146,7 +148,7 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
             throw new DomainException(DomainError::INVALID_BOOKING_STATE_FOR_PAYMENT);
         }
 
-        $paymentExists = Payment::query()->where('booking_id', $booking->id)->exists();
+        $paymentExists = $this->paymentRepository->existsForBooking($booking->id);
         if ($paymentExists) {
             throw new DomainException(DomainError::PAYMENT_ALREADY_EXISTS);
         }
