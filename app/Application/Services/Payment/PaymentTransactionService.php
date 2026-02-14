@@ -7,7 +7,7 @@ use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
-use App\Application\Payment\DTO\ProcessPaymentData;
+use App\Application\Payment\DTO\CreatePaymentData;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\User\Models\User;
 
@@ -30,7 +30,7 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
         return $payment;
     }
 
-    public function process(User $user, ProcessPaymentData $data): Payment
+    public function process(User $user, CreatePaymentData $data): Payment
     {
         return $this->processPaymentAction->execute($user, $data);
     }

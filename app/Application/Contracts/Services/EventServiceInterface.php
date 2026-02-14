@@ -3,7 +3,7 @@
 namespace App\Application\Contracts\Services;
 
 use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\ListEventsData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
@@ -14,7 +14,7 @@ interface EventServiceInterface
     /**
      * @return LengthAwarePaginator<int, Event>
      */
-    public function index(EventIndexData $query): LengthAwarePaginator;
+    public function index(ListEventsData $query): LengthAwarePaginator;
 
     public function show(int $id): Event;
 

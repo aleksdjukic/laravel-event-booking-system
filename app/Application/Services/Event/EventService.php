@@ -7,7 +7,7 @@ use App\Domain\Event\Repositories\EventRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\ListEventsData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
@@ -23,7 +23,7 @@ class EventService implements EventServiceInterface
     /**
      * @return LengthAwarePaginator<int, Event>
      */
-    public function index(EventIndexData $query): LengthAwarePaginator
+    public function index(ListEventsData $query): LengthAwarePaginator
     {
         $page = $query->page;
         $queryArray = [

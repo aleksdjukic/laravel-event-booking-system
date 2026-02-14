@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Event;
 
 use App\Application\Contracts\Services\EventServiceInterface;
 use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\ListEventsData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Event\ListEventsRequest;
@@ -25,7 +25,7 @@ class EventController extends Controller
 
     public function index(ListEventsRequest $request): JsonResponse
     {
-        $events = $this->eventService->index(EventIndexData::fromArray($request->validated()));
+        $events = $this->eventService->index(ListEventsData::fromArray($request->validated()));
 
         return $this->responder->success(EventResource::collection($events), 'OK');
     }

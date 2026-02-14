@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Payment;
 
 use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
-use App\Application\Payment\DTO\ProcessPaymentData;
+use App\Application\Payment\DTO\CreatePaymentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Payment\CreatePaymentRequest;
 use App\Http\Resources\Api\V1\Payment\PaymentResource;
@@ -30,7 +30,7 @@ class PaymentController extends Controller
 
         $payment = $this->paymentService->process(
             $request->user(),
-            ProcessPaymentData::fromInput($booking->id, $forceSuccess, $idempotencyKey)
+            CreatePaymentData::fromInput($booking->id, $forceSuccess, $idempotencyKey)
         );
 
         return $this->responder->created(PaymentResource::make($payment), 'Payment processed successfully');

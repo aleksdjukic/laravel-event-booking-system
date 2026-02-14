@@ -3,7 +3,7 @@
 namespace App\Domain\Event\Repositories;
 
 use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\ListEventsData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
@@ -14,7 +14,7 @@ interface EventRepositoryInterface
     /**
      * @return LengthAwarePaginator<int, Event>
      */
-    public function paginate(EventIndexData $query): LengthAwarePaginator;
+    public function paginate(ListEventsData $query): LengthAwarePaginator;
 
     public function find(int $id): ?Event;
 

@@ -10,7 +10,7 @@ use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
-use App\Application\Payment\DTO\ProcessPaymentData;
+use App\Application\Payment\DTO\CreatePaymentData;
 use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\User\Enums\Role;
@@ -38,7 +38,7 @@ class ProcessPaymentAction
     ) {
     }
 
-    public function execute(User $user, ProcessPaymentData $data): Payment
+    public function execute(User $user, CreatePaymentData $data): Payment
     {
         $idempotencyRecord = $this->resolveIdempotencyRecord($user, $data);
         if ($idempotencyRecord?->payment_id !== null) {
@@ -184,7 +184,7 @@ class ProcessPaymentAction
         return $hasBookingIdColumn && $hasUniqueHint;
     }
 
-    private function resolveIdempotencyRecord(User $user, ProcessPaymentData $data): ?PaymentIdempotencyKey
+    private function resolveIdempotencyRecord(User $user, CreatePaymentData $data): ?PaymentIdempotencyKey
     {
         if ($data->idempotencyKey === null) {
             return null;

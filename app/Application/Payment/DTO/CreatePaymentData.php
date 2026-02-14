@@ -2,7 +2,7 @@
 
 namespace App\Application\Payment\DTO;
 
-class ProcessPaymentData
+class CreatePaymentData
 {
     public function __construct(
         public readonly int $bookingId,

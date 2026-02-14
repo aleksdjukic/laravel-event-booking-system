@@ -2,7 +2,7 @@
 
 namespace App\Application\Event\DTO;
 
-class EventIndexData
+class ListEventsData
 {
     public function __construct(
         public readonly int $page,

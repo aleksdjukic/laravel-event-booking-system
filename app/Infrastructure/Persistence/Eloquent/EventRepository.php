@@ -4,7 +4,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Event\Repositories\EventRepositoryInterface;
 use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\EventIndexData;
+use App\Application\Event\DTO\ListEventsData;
 use App\Application\Event\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
@@ -18,7 +18,7 @@ class EventRepository implements EventRepositoryInterface
     /**
      * @return LengthAwarePaginator<int, Event>
      */
-    public function paginate(EventIndexData $query): LengthAwarePaginator
+    public function paginate(ListEventsData $query): LengthAwarePaginator
     {
         $eventQuery = Event::query();
         $this->searchByTitle($eventQuery, $query->search);
