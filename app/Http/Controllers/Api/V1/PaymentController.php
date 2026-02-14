@@ -9,15 +9,15 @@ use App\Http\Requests\Api\V1\Payment\PaymentStoreRequest;
 use App\Http\Resources\Api\V1\PaymentResource;
 use App\Models\Booking;
 use App\Models\Payment;
-use App\Support\Http\ApiResponse;
+use App\Support\Http\ApiResponder;
 use Illuminate\Http\JsonResponse;
 
 class PaymentController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly PaymentTransactionServiceInterface $paymentService)
-    {
+    public function __construct(
+        private readonly PaymentTransactionServiceInterface $paymentService,
+        private readonly ApiResponder $responder,
+    ) {
     }
 
     public function store(Booking $booking, PaymentStoreRequest $request): JsonResponse
@@ -31,13 +31,13 @@ class PaymentController extends Controller
             ProcessPaymentData::fromInput($booking->id, $forceSuccess)
         );
 
-        return $this->created(PaymentResource::make($payment)->resolve(), 'Payment processed successfully');
+        return $this->responder->created(PaymentResource::make($payment), 'Payment processed successfully');
     }
 
     public function show(Payment $payment): JsonResponse
     {
         $this->authorize('view', $payment);
 
-        return $this->success(PaymentResource::make($payment)->resolve(), 'OK');
+        return $this->responder->success(PaymentResource::make($payment), 'OK');
     }
 }

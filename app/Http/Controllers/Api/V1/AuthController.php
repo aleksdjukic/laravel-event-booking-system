@@ -9,24 +9,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Http\Resources\Api\V1\UserResource;
-use App\Support\Http\ApiResponse;
+use App\Support\Http\ApiResponder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly AuthServiceInterface $authService)
-    {
+    public function __construct(
+        private readonly AuthServiceInterface $authService,
+        private readonly ApiResponder $responder,
+    ) {
     }
 
     public function register(RegisterRequest $request): JsonResponse
     {
         $payload = $this->authService->register(RegisterData::fromArray($request->validated()));
 
-        return $this->created([
-            'user' => UserResource::make($payload['user'])->resolve(),
+        return $this->responder->created([
+            'user' => UserResource::make($payload['user']),
             'token' => $payload['token'],
         ], 'Registered successfully');
     }
@@ -35,11 +35,11 @@ class AuthController extends Controller
     {
         $payload = $this->authService->login(LoginData::fromArray($request->validated()));
         if ($payload === null) {
-            return $this->error('Invalid credentials.', 401);
+            return $this->responder->error('Invalid credentials.', 401);
         }
 
-        return $this->success([
-            'user' => UserResource::make($payload['user'])->resolve(),
+        return $this->responder->success([
+            'user' => UserResource::make($payload['user']),
             'token' => $payload['token'],
         ], 'Login successful');
     }
@@ -48,6 +48,6 @@ class AuthController extends Controller
     {
         $this->authService->logout($request->user());
 
-        return $this->success(null, 'Logout successful');
+        return $this->responder->success(null, 'Logout successful');
     }
 }

@@ -9,16 +9,16 @@ use App\Http\Requests\Api\V1\Booking\BookingStoreRequest;
 use App\Http\Resources\Api\V1\BookingResource;
 use App\Models\Booking;
 use App\Models\Ticket;
-use App\Support\Http\ApiResponse;
+use App\Support\Http\ApiResponder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly BookingServiceInterface $bookingService)
-    {
+    public function __construct(
+        private readonly BookingServiceInterface $bookingService,
+        private readonly ApiResponder $responder,
+    ) {
     }
 
     public function store(Ticket $ticket, BookingStoreRequest $request): JsonResponse
@@ -29,7 +29,7 @@ class BookingController extends Controller
             CreateBookingData::fromArray($request->validated())
         );
 
-        return $this->created(BookingResource::make($booking)->resolve(), 'Booking created successfully');
+        return $this->responder->created(BookingResource::make($booking), 'Booking created successfully');
     }
 
     public function index(Request $request): JsonResponse
@@ -38,10 +38,7 @@ class BookingController extends Controller
 
         $bookings = $this->bookingService->listFor($request->user());
 
-        return $this->success(
-            BookingResource::collection($bookings)->response()->getData(true),
-            'OK'
-        );
+        return $this->responder->success(BookingResource::collection($bookings), 'OK');
     }
 
     public function cancel(Booking $booking): JsonResponse
@@ -50,6 +47,6 @@ class BookingController extends Controller
 
         $booking = $this->bookingService->cancel($booking);
 
-        return $this->success(BookingResource::make($booking)->resolve(), 'Booking cancelled successfully');
+        return $this->responder->success(BookingResource::make($booking), 'Booking cancelled successfully');
     }
 }

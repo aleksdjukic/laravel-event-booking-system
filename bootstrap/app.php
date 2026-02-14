@@ -3,6 +3,7 @@
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Http\Middleware\EnsureRole;
+use App\Support\Http\ApiResponder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -24,12 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $apiError = static fn (string $message, int $status, mixed $errors = null) => response()->json([
-            'success' => false,
-            'message' => $message,
-            'data' => null,
-            'errors' => $errors,
-        ], $status);
+        $apiResponder = new ApiResponder();
+        $apiError = static fn (string $message, int $status, mixed $errors = null) => $apiResponder->error($message, $status, $errors);
 
         $exceptions->render(function (DomainException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {

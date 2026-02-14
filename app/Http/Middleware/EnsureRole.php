@@ -3,20 +3,15 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Role;
+use App\Support\Http\ApiResponder;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureRole
 {
-    private function errorResponse(string $message, int $status): Response
+    public function __construct(private readonly ApiResponder $responder)
     {
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-            'data' => null,
-            'errors' => null,
-        ], $status);
     }
 
     /**
@@ -29,7 +24,7 @@ class EnsureRole
         $user = $request->user();
 
         if ($user === null) {
-            return $this->errorResponse('Unauthorized', 401);
+            return $this->responder->error('Unauthorized', 401);
         }
 
         $allowedRoles = [];
@@ -45,7 +40,7 @@ class EnsureRole
         $userRole = $user->role instanceof Role ? $user->role->value : (string) $user->role;
 
         if (! in_array($userRole, $allowedRoles, true)) {
-            return $this->errorResponse('Forbidden', 403);
+            return $this->responder->error('Forbidden', 403);
         }
 
         return $next($request);

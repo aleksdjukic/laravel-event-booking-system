@@ -11,29 +11,29 @@ use App\Http\Requests\Api\V1\Ticket\TicketUpdateRequest;
 use App\Http\Resources\Api\V1\TicketResource;
 use App\Models\Event;
 use App\Models\Ticket;
-use App\Support\Http\ApiResponse;
+use App\Support\Http\ApiResponder;
 use Illuminate\Http\JsonResponse;
 
 class TicketController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly TicketServiceInterface $ticketService)
-    {
+    public function __construct(
+        private readonly TicketServiceInterface $ticketService,
+        private readonly ApiResponder $responder,
+    ) {
     }
 
     public function store(TicketStoreRequest $request, Event $event): JsonResponse
     {
         $ticket = $this->ticketService->create($event, CreateTicketData::fromArray($request->validated()));
 
-        return $this->created(TicketResource::make($ticket)->resolve(), 'Ticket created successfully');
+        return $this->responder->created(TicketResource::make($ticket), 'Ticket created successfully');
     }
 
     public function update(TicketUpdateRequest $request, Ticket $ticket): JsonResponse
     {
         $ticket = $this->ticketService->update($ticket, UpdateTicketData::fromArray($request->validated()));
 
-        return $this->success(TicketResource::make($ticket)->resolve(), 'Ticket updated successfully');
+        return $this->responder->success(TicketResource::make($ticket), 'Ticket updated successfully');
     }
 
     public function destroy(Ticket $ticket): JsonResponse
@@ -42,6 +42,6 @@ class TicketController extends Controller
 
         $this->ticketService->delete($ticket);
 
-        return $this->success(null, 'Ticket deleted successfully');
+        return $this->responder->success(null, 'Ticket deleted successfully');
     }
 }

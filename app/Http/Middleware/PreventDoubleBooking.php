@@ -4,12 +4,17 @@ namespace App\Http\Middleware;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
+use App\Support\Http\ApiResponder;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PreventDoubleBooking
 {
+    public function __construct(private readonly ApiResponder $responder)
+    {
+    }
+
     /**
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -29,12 +34,7 @@ class PreventDoubleBooking
             ->exists();
 
         if ($hasActiveBooking) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You already have an active booking for this ticket.',
-                'data' => null,
-                'errors' => null,
-            ], 409);
+            return $this->responder->error('You already have an active booking for this ticket.', 409);
         }
 
         return $next($request);

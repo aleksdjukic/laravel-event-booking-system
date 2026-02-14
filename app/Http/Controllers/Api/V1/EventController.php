@@ -12,32 +12,29 @@ use App\Http\Requests\Api\V1\Event\EventStoreRequest;
 use App\Http\Requests\Api\V1\Event\EventUpdateRequest;
 use App\Http\Resources\Api\V1\EventResource;
 use App\Models\Event;
-use App\Support\Http\ApiResponse;
+use App\Support\Http\ApiResponder;
 use Illuminate\Http\JsonResponse;
 
 class EventController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly EventServiceInterface $eventService)
-    {
+    public function __construct(
+        private readonly EventServiceInterface $eventService,
+        private readonly ApiResponder $responder,
+    ) {
     }
 
     public function index(EventIndexRequest $request): JsonResponse
     {
         $events = $this->eventService->index(EventIndexData::fromArray($request->validated()));
 
-        return $this->success(
-            EventResource::collection($events)->response()->getData(true),
-            'OK'
-        );
+        return $this->responder->success(EventResource::collection($events), 'OK');
     }
 
     public function show(Event $event): JsonResponse
     {
         $event = $this->eventService->show($event->id);
 
-        return $this->success(EventResource::make($event)->resolve(), 'OK');
+        return $this->responder->success(EventResource::make($event), 'OK');
     }
 
     public function store(EventStoreRequest $request): JsonResponse
@@ -47,14 +44,14 @@ class EventController extends Controller
             CreateEventData::fromArray($request->validated())
         );
 
-        return $this->created(EventResource::make($event)->resolve(), 'Event created successfully');
+        return $this->responder->created(EventResource::make($event), 'Event created successfully');
     }
 
     public function update(EventUpdateRequest $request, Event $event): JsonResponse
     {
         $event = $this->eventService->update($event, UpdateEventData::fromArray($request->validated()));
 
-        return $this->success(EventResource::make($event)->resolve(), 'Event updated successfully');
+        return $this->responder->success(EventResource::make($event), 'Event updated successfully');
     }
 
     public function destroy(Event $event): JsonResponse
@@ -63,6 +60,6 @@ class EventController extends Controller
 
         $this->eventService->delete($event);
 
-        return $this->success(null, 'Event deleted successfully');
+        return $this->responder->success(null, 'Event deleted successfully');
     }
 }
