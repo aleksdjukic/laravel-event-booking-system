@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Contracts\Services\PaymentTransactionServiceInterface;
+use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Application\Payment\DTO\ProcessPaymentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Payment\PaymentStoreRequest;

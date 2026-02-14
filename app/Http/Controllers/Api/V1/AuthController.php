@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Contracts\Services\AuthServiceInterface;
+use App\Application\Contracts\Services\AuthServiceInterface;
 use App\Application\Auth\DTO\LoginData;
 use App\Application\Auth\DTO\RegisterData;
 use App\Http\Controllers\Controller;

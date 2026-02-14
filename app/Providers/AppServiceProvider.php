@@ -2,28 +2,28 @@
 
 namespace App\Providers;
 
-use App\Contracts\Repositories\EventRepositoryInterface;
-use App\Contracts\Services\AuthServiceInterface;
-use App\Contracts\Services\BookingServiceInterface;
-use App\Contracts\Services\EventServiceInterface;
-use App\Contracts\Services\PaymentTransactionServiceInterface;
-use App\Contracts\Services\TicketServiceInterface;
+use App\Domain\Event\Repositories\EventRepositoryInterface;
+use App\Application\Contracts\Services\AuthServiceInterface;
+use App\Application\Contracts\Services\BookingServiceInterface;
+use App\Application\Contracts\Services\EventServiceInterface;
+use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
+use App\Application\Contracts\Services\TicketServiceInterface;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\Domain\Event\Models\Event;
 use App\Observers\EventObserver;
-use App\Repositories\Eloquent\BookingRepository;
-use App\Services\Auth\AuthService;
-use App\Services\Booking\BookingService;
-use App\Services\Event\EventService;
-use App\Repositories\Eloquent\PaymentRepository;
-use App\Repositories\Eloquent\PaymentIdempotencyRepository;
-use App\Services\Payment\PaymentTransactionService;
-use App\Repositories\Eloquent\TicketRepository;
-use App\Services\Ticket\TicketService;
-use App\Repositories\Eloquent\EventRepository;
+use App\Infrastructure\Persistence\Eloquent\BookingRepository;
+use App\Application\Services\Auth\AuthService;
+use App\Application\Services\Booking\BookingService;
+use App\Application\Services\Event\EventService;
+use App\Infrastructure\Persistence\Eloquent\PaymentRepository;
+use App\Infrastructure\Persistence\Eloquent\PaymentIdempotencyRepository;
+use App\Application\Services\Payment\PaymentTransactionService;
+use App\Infrastructure\Persistence\Eloquent\TicketRepository;
+use App\Application\Services\Ticket\TicketService;
+use App\Infrastructure\Persistence\Eloquent\EventRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 

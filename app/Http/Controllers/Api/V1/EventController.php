@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Contracts\Services\EventServiceInterface;
+use App\Application\Contracts\Services\EventServiceInterface;
 use App\Application\Event\DTO\CreateEventData;
 use App\Application\Event\DTO\EventIndexData;
 use App\Application\Event\DTO\UpdateEventData;

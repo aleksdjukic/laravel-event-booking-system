@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Contracts\Services\TicketServiceInterface;
+use App\Application\Contracts\Services\TicketServiceInterface;
 use App\Application\Ticket\DTO\CreateTicketData;
 use App\Application\Ticket\DTO\UpdateTicketData;
 use App\Http\Controllers\Controller;
