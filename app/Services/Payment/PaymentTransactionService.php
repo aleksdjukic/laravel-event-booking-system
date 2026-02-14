@@ -64,7 +64,7 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
 
             $this->ensureInventory($booking, $ticket);
 
-            $amount = number_format(((float) $ticket->price) * (int) $booking->quantity, 2, '.', '');
+            $amount = round(((float) $ticket->price) * (int) $booking->quantity, 2);
             $processed = $this->gatewayService->process($booking, $data->forceSuccess);
 
             $payment = new Payment();
@@ -95,18 +95,18 @@ class PaymentTransactionService implements PaymentTransactionServiceInterface
             $payment->save();
             DB::commit();
 
-            $paymentStatus = $payment->status instanceof PaymentStatus
-                ? $payment->status
-                : PaymentStatus::from((string) $payment->status);
+            if ($this->paymentTransitionGuard->canNotifyCustomer($payment->status) && is_array($notificationPayload)) {
+                $booking = $booking->load('user');
+                $bookingUser = $booking->user;
 
-            if ($this->paymentTransitionGuard->canNotifyCustomer($paymentStatus) && is_array($notificationPayload)) {
-                $booking->load('user');
-                $booking->user?->notify(new BookingConfirmedNotification(
+                if ($bookingUser instanceof User) {
+                    $bookingUser->notify(new BookingConfirmedNotification(
                     $notificationPayload['booking_id'],
                     $notificationPayload['event_title'],
                     $notificationPayload['ticket_type'],
                     $notificationPayload['quantity'],
-                ));
+                    ));
+                }
             }
 
             return $payment->load('booking');

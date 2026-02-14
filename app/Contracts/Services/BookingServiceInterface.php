@@ -11,6 +11,9 @@ interface BookingServiceInterface
 {
     public function create(User $user, int $ticketId, CreateBookingData $data): Booking;
 
+    /**
+     * @return LengthAwarePaginator<int, Booking>
+     */
     public function listFor(User $user): LengthAwarePaginator;
 
     public function findOrFail(int $id): Booking;

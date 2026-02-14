@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property Role|string $role
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -51,16 +54,25 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * @return HasMany<Event, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<Booking, $this>
+     */
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }
 
+    /**
+     * @return HasManyThrough<Payment, Booking, $this>
+     */
     public function payments(): HasManyThrough
     {
         return $this->hasManyThrough(Payment::class, Booking::class);

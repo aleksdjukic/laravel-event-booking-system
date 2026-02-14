@@ -20,6 +20,9 @@ class EventService implements EventServiceInterface
     {
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Event>
+     */
     public function index(EventIndexData $query): LengthAwarePaginator
     {
         $page = $query->page;

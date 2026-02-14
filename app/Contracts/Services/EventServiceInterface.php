@@ -11,6 +11,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface EventServiceInterface
 {
+    /**
+     * @return LengthAwarePaginator<int, Event>
+     */
     public function index(EventIndexData $query): LengthAwarePaginator;
 
     public function show(int $id): Event;

@@ -47,6 +47,9 @@ class BookingService implements BookingServiceInterface
         return $booking;
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Booking>
+     */
     public function listFor(User $user): LengthAwarePaginator
     {
         $query = Booking::query()->with(['ticket', 'payment']);

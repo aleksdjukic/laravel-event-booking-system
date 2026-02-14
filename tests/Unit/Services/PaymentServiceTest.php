@@ -36,7 +36,6 @@ class PaymentServiceTest extends TestCase
         $first = $service->process($booking);
         $second = $service->process($booking);
 
-        $this->assertIsBool($first);
         $this->assertSame($first, $second);
     }
 }

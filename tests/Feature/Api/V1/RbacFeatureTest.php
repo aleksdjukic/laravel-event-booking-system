@@ -80,7 +80,7 @@ class RbacFeatureTest extends TestCase
         $organizerB = $this->createUser('organizer', 'rbac.organizer.b@example.com');
 
         $event = $this->createEvent($organizerA, 'Organizer A Event');
-        $ticket = $this->createTicket($event, 'Standard', '75.00', 10);
+        $ticket = $this->createTicket($event, 'Standard', 75.00, 10);
 
         Sanctum::actingAs($organizerB);
 
@@ -106,7 +106,7 @@ class RbacFeatureTest extends TestCase
         $organizer = $this->createUser('organizer', 'rbac.organizer.owner@example.com');
 
         $event = $this->createEvent($organizer, 'Owner Event');
-        $ticket = $this->createTicket($event, 'Regular', '40.00', 15);
+        $ticket = $this->createTicket($event, 'Regular', 40.00, 15);
 
         Sanctum::actingAs($admin);
 
@@ -156,8 +156,8 @@ class RbacFeatureTest extends TestCase
         $organizer = $this->createUser('organizer', 'rbac.organizer.duplicate.update@example.com');
         $event = $this->createEvent($organizer, 'Duplicate Update Event');
 
-        $vipTicket = $this->createTicket($event, 'VIP', '120.00', 10);
-        $standardTicket = $this->createTicket($event, 'Standard', '80.00', 10);
+        $vipTicket = $this->createTicket($event, 'VIP', 120.00, 10);
+        $standardTicket = $this->createTicket($event, 'Standard', 80.00, 10);
 
         Sanctum::actingAs($organizer);
 
@@ -197,7 +197,7 @@ class RbacFeatureTest extends TestCase
         return $event;
     }
 
-    private function createTicket(Event $event, string $type, string $price, int $quantity): Ticket
+    private function createTicket(Event $event, string $type, float $price, int $quantity): Ticket
     {
         $ticket = new Ticket();
         $ticket->event_id = $event->id;

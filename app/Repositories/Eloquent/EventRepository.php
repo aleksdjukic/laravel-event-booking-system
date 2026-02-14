@@ -15,6 +15,9 @@ class EventRepository implements EventRepositoryInterface
 {
     use CommonQueryScopes;
 
+    /**
+     * @return LengthAwarePaginator<int, Event>
+     */
     public function paginate(EventIndexData $query): LengthAwarePaginator
     {
         $eventQuery = Event::query();

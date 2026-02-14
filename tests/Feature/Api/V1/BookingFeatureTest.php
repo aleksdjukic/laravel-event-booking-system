@@ -161,7 +161,7 @@ class BookingFeatureTest extends TestCase
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
         $ticket->type = 'Standard';
-        $ticket->price = '50.00';
+        $ticket->price = 50.00;
         $ticket->quantity = $quantity;
         $ticket->save();
 

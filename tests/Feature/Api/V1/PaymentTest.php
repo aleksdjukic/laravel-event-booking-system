@@ -46,7 +46,7 @@ class PaymentTest extends TestCase
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
         $ticket->type = 'Standard';
-        $ticket->price = '100.00';
+        $ticket->price = 100.00;
         $ticket->quantity = 10;
         $ticket->save();
 

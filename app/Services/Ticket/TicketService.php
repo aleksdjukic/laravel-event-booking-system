@@ -49,7 +49,7 @@ class TicketService implements TicketServiceInterface
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
         $ticket->type = $data->type;
-        $ticket->price = number_format($data->price, 2, '.', '');
+        $ticket->price = round($data->price, 2);
         $ticket->quantity = $data->quantity;
         $ticket->save();
 
@@ -76,7 +76,7 @@ class TicketService implements TicketServiceInterface
         }
 
         if ($data->price !== null) {
-            $ticket->price = number_format($data->price, 2, '.', '');
+            $ticket->price = round($data->price, 2);
         }
 
         if ($data->quantity !== null) {

@@ -164,7 +164,7 @@ class PaymentEdgeFeatureTest extends TestCase
         $ticket = new Ticket();
         $ticket->event_id = $event->id;
         $ticket->type = 'Standard';
-        $ticket->price = '80.00';
+        $ticket->price = 80.00;
         $ticket->quantity = $ticketQuantity;
         $ticket->save();
 

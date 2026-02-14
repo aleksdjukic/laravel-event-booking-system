@@ -11,6 +11,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface EventRepositoryInterface
 {
+    /**
+     * @return LengthAwarePaginator<int, Event>
+     */
     public function paginate(EventIndexData $query): LengthAwarePaginator;
 
     public function find(int $id): ?Event;
