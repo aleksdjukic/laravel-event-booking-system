@@ -46,6 +46,26 @@ class ApiErrorEnvelopeFeatureTest extends TestCase
             ->assertJsonPath('data', null);
     }
 
+    public function test_unauthenticated_error_uses_uniform_envelope(): void
+    {
+        $this->getJson('/api/v1/user/me')
+            ->assertStatus(401)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Unauthorized')
+            ->assertJsonPath('data', null)
+            ->assertJsonPath('errors', null);
+    }
+
+    public function test_not_found_error_uses_uniform_envelope(): void
+    {
+        $this->getJson('/api/v1/unknown-endpoint')
+            ->assertStatus(404)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Not found')
+            ->assertJsonPath('data', null)
+            ->assertJsonPath('errors', null);
+    }
+
     private function createUser(Role $role, string $email): User
     {
         $user = new User();

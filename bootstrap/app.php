@@ -6,11 +6,14 @@ use App\Http\Middleware\EnsureRole;
 use App\Support\Http\ApiResponder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -52,14 +55,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return $apiError($exception->getMessage(), $status);
         });
 
-        $exceptions->render(function (AuthenticationException $exception, Request $request) {
+        $exceptions->render(function (AuthenticationException $exception, Request $request) use ($apiError) {
             if ($request->is('api/*')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized',
-                    'data' => null,
-                    'errors' => null,
-                ], 401);
+                return $apiError('Unauthorized', 401);
             }
         });
 
@@ -72,6 +70,35 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $exception, Request $request) use ($apiError) {
             if ($request->is('api/*')) {
                 return $apiError('The given data was invalid.', 422, $exception->errors());
+            }
+        });
+
+        $exceptions->render(function (ModelNotFoundException|NotFoundHttpException $exception, Request $request) use ($apiError) {
+            if ($request->is('api/*')) {
+                return $apiError('Not found', 404);
+            }
+        });
+
+        $exceptions->render(function (HttpExceptionInterface $exception, Request $request) use ($apiError) {
+            if (! $request->is('api/*')) {
+                return null;
+            }
+
+            $status = $exception->getStatusCode();
+            $message = match ($status) {
+                401 => 'Unauthorized',
+                403 => 'Forbidden',
+                404 => 'Not found',
+                422 => 'The given data was invalid.',
+                default => $status >= 500 ? 'Server error' : 'Request error',
+            };
+
+            return $apiError($message, $status);
+        });
+
+        $exceptions->render(function (\Throwable $exception, Request $request) use ($apiError) {
+            if ($request->is('api/*')) {
+                return $apiError('Server error', 500);
             }
         });
     })->create();
