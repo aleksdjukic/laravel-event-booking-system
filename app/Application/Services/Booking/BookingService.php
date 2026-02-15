@@ -4,7 +4,6 @@ namespace App\Application\Services\Booking;
 
 use App\Application\Booking\Actions\CancelBookingAction;
 use App\Application\Booking\Actions\CreateBookingAction;
-use App\Application\Booking\Actions\FindBookingAction;
 use App\Application\Booking\Actions\ListBookingsForUserAction;
 use App\Application\Contracts\Services\BookingServiceInterface;
 use App\Application\Booking\DTO\CreateBookingData;
@@ -17,7 +16,6 @@ class BookingService implements BookingServiceInterface
     public function __construct(
         private readonly CreateBookingAction $createBookingAction,
         private readonly CancelBookingAction $cancelBookingAction,
-        private readonly FindBookingAction $findBookingAction,
         private readonly ListBookingsForUserAction $listBookingsForUserAction,
     ) {
     }
@@ -33,11 +31,6 @@ class BookingService implements BookingServiceInterface
     public function listFor(User $user): LengthAwarePaginator
     {
         return $this->listBookingsForUserAction->execute($user);
-    }
-
-    public function findOrFail(int $id): Booking
-    {
-        return $this->findBookingAction->execute($id);
     }
 
     public function cancel(Booking $booking): Booking

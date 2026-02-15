@@ -5,7 +5,6 @@ namespace App\Application\Services\Event;
 use App\Application\Contracts\Services\EventServiceInterface;
 use App\Application\Event\Actions\CreateEventAction;
 use App\Application\Event\Actions\DeleteEventAction;
-use App\Application\Event\Actions\FindEventAction;
 use App\Application\Event\Actions\FindEventWithTicketsAction;
 use App\Application\Event\Actions\ListEventsAction;
 use App\Application\Event\Actions\UpdateEventAction;
@@ -23,7 +22,6 @@ class EventService implements EventServiceInterface
         private readonly CreateEventAction $createEventAction,
         private readonly UpdateEventAction $updateEventAction,
         private readonly DeleteEventAction $deleteEventAction,
-        private readonly FindEventAction $findEventAction,
         private readonly FindEventWithTicketsAction $findEventWithTicketsAction,
     ) {
     }
@@ -39,11 +37,6 @@ class EventService implements EventServiceInterface
     public function show(int $id): Event
     {
         return $this->findEventWithTicketsAction->execute($id);
-    }
-
-    public function findOrFail(int $id): Event
-    {
-        return $this->findEventAction->execute($id);
     }
 
     public function create(User $user, CreateEventData $data): Event

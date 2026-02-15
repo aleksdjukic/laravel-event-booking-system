@@ -18,8 +18,6 @@ interface EventServiceInterface
 
     public function show(int $id): Event;
 
-    public function findOrFail(int $id): Event;
-
     public function create(User $user, CreateEventData $data): Event;
 
     public function update(Event $event, UpdateEventData $data): Event;

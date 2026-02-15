@@ -9,10 +9,6 @@ use App\Domain\Ticket\Models\Ticket;
 
 interface TicketServiceInterface
 {
-    public function findEventOrFail(int $eventId): Event;
-
-    public function findTicketOrFail(int $id): Ticket;
-
     public function create(Event $event, CreateTicketData $data): Ticket;
 
     public function update(Ticket $ticket, UpdateTicketData $data): Ticket;

@@ -16,7 +16,5 @@ interface BookingServiceInterface
      */
     public function listFor(User $user): LengthAwarePaginator;
 
-    public function findOrFail(int $id): Booking;
-
     public function cancel(Booking $booking): Booking;
 }
