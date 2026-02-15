@@ -5,6 +5,7 @@ namespace App\Application\Payment\Actions;
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Payment\PaymentTransitionGuard;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
+use App\Domain\Payment\Services\PaymentGatewayInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
@@ -14,14 +15,13 @@ use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\User\Models\User;
 use App\Infrastructure\Notifications\Booking\BookingConfirmedNotification;
-use App\Infrastructure\Payment\PaymentGatewayService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
 class ProcessPaymentAction
 {
     public function __construct(
-        private readonly PaymentGatewayService $gatewayService,
+        private readonly PaymentGatewayInterface $gatewayService,
         private readonly PaymentTransitionGuard $paymentTransitionGuard,
         private readonly BookingRepositoryInterface $bookingRepository,
         private readonly TicketRepositoryInterface $ticketRepository,

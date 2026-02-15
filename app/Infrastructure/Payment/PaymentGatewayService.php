@@ -3,8 +3,9 @@
 namespace App\Infrastructure\Payment;
 
 use App\Domain\Booking\Models\Booking;
+use App\Domain\Payment\Services\PaymentGatewayInterface;
 
-class PaymentGatewayService
+class PaymentGatewayService implements PaymentGatewayInterface
 {
     private const SIMULATED_SUCCESS_RATE = 80;
 
