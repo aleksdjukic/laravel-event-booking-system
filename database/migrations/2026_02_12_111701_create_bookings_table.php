@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Booking\Enums\BookingStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('ticket_id')->constrained('tickets')->cascadeOnDelete();
             $table->unsignedInteger('quantity');
-            $table->string('status')->default('pending');
+            $table->string('status')->default(BookingStatus::PENDING->value);
             $table->timestamps();
 
             $table->index(['user_id', 'status']);
@@ -28,7 +29,7 @@ return new class extends Migration
             DB::statement(
                 "CREATE UNIQUE INDEX bookings_unique_active_per_user_ticket
                 ON bookings (user_id, ticket_id)
-                WHERE status = 'pending'"
+                WHERE status = '".BookingStatus::PENDING->value."'"
             );
         }
     }

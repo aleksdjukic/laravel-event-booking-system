@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Booking\Enums\BookingStatus;
+use App\Domain\Payment\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -26,15 +27,17 @@ return new class extends Migration
             });
 
         $driver = DB::getDriverName();
+        $bookingStatuses = $this->bookingStatusesSqlList();
+        $paymentStatuses = $this->paymentStatusesSqlList();
 
         if ($driver === 'mysql') {
-            DB::statement("ALTER TABLE bookings ADD CONSTRAINT chk_bookings_status CHECK (status IN ('pending','confirmed','cancelled'))");
-            DB::statement("ALTER TABLE payments ADD CONSTRAINT chk_payments_status CHECK (status IN ('success','failed','refunded'))");
+            DB::statement("ALTER TABLE bookings ADD CONSTRAINT chk_bookings_status CHECK (status IN ($bookingStatuses))");
+            DB::statement("ALTER TABLE payments ADD CONSTRAINT chk_payments_status CHECK (status IN ($paymentStatuses))");
         }
 
         if ($driver === 'pgsql') {
-            DB::statement("ALTER TABLE bookings ADD CONSTRAINT chk_bookings_status CHECK (status IN ('pending','confirmed','cancelled'))");
-            DB::statement("ALTER TABLE payments ADD CONSTRAINT chk_payments_status CHECK (status IN ('success','failed','refunded'))");
+            DB::statement("ALTER TABLE bookings ADD CONSTRAINT chk_bookings_status CHECK (status IN ($bookingStatuses))");
+            DB::statement("ALTER TABLE payments ADD CONSTRAINT chk_payments_status CHECK (status IN ($paymentStatuses))");
         }
 
         if ($driver === 'sqlite') {
@@ -42,7 +45,7 @@ return new class extends Migration
                 CREATE TRIGGER bookings_status_check_insert
                 BEFORE INSERT ON bookings
                 FOR EACH ROW
-                WHEN NEW.status NOT IN ('pending','confirmed','cancelled')
+                WHEN NEW.status NOT IN ($bookingStatuses)
                 BEGIN
                     SELECT RAISE(ABORT, 'invalid bookings.status');
                 END;
@@ -52,7 +55,7 @@ return new class extends Migration
                 CREATE TRIGGER bookings_status_check_update
                 BEFORE UPDATE OF status ON bookings
                 FOR EACH ROW
-                WHEN NEW.status NOT IN ('pending','confirmed','cancelled')
+                WHEN NEW.status NOT IN ($bookingStatuses)
                 BEGIN
                     SELECT RAISE(ABORT, 'invalid bookings.status');
                 END;
@@ -62,7 +65,7 @@ return new class extends Migration
                 CREATE TRIGGER payments_status_check_insert
                 BEFORE INSERT ON payments
                 FOR EACH ROW
-                WHEN NEW.status NOT IN ('success','failed','refunded')
+                WHEN NEW.status NOT IN ($paymentStatuses)
                 BEGIN
                     SELECT RAISE(ABORT, 'invalid payments.status');
                 END;
@@ -72,7 +75,7 @@ return new class extends Migration
                 CREATE TRIGGER payments_status_check_update
                 BEFORE UPDATE OF status ON payments
                 FOR EACH ROW
-                WHEN NEW.status NOT IN ('success','failed','refunded')
+                WHEN NEW.status NOT IN ($paymentStatuses)
                 BEGIN
                     SELECT RAISE(ABORT, 'invalid payments.status');
                 END;
@@ -100,5 +103,32 @@ return new class extends Migration
             $table->dropUnique('bookings_active_booking_key_unique');
             $table->dropColumn('active_booking_key');
         });
+    }
+
+    private function bookingStatusesSqlList(): string
+    {
+        return $this->asSqlInList(array_map(
+            static fn (BookingStatus $status): string => $status->value,
+            BookingStatus::cases(),
+        ));
+    }
+
+    private function paymentStatusesSqlList(): string
+    {
+        return $this->asSqlInList(array_map(
+            static fn (PaymentStatus $status): string => $status->value,
+            PaymentStatus::cases(),
+        ));
+    }
+
+    /**
+     * @param  array<int, string>  $values
+     */
+    private function asSqlInList(array $values): string
+    {
+        return implode(', ', array_map(
+            static fn (string $value): string => "'".$value."'",
+            $values,
+        ));
     }
 };
