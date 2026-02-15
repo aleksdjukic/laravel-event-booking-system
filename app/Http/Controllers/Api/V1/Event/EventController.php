@@ -9,6 +9,7 @@ use App\Application\Event\DTO\UpdateEventData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Event\ListEventsRequest;
 use App\Http\Requests\Api\V1\Event\CreateEventRequest;
+use App\Http\Requests\Api\V1\Event\DeleteEventRequest;
 use App\Http\Requests\Api\V1\Event\UpdateEventRequest;
 use App\Http\Resources\Api\V1\Event\EventResource;
 use App\Domain\Event\Models\Event;
@@ -54,10 +55,8 @@ class EventController extends Controller
         return $this->responder->success(EventResource::make($event), 'Event updated successfully');
     }
 
-    public function destroy(Event $event): JsonResponse
+    public function destroy(DeleteEventRequest $request, Event $event): JsonResponse
     {
-        $this->authorize('delete', $event);
-
         $this->eventService->delete($event);
 
         return $this->responder->success(null, 'Event deleted successfully');

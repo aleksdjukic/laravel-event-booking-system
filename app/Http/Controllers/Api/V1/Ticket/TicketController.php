@@ -7,6 +7,7 @@ use App\Application\Ticket\DTO\CreateTicketData;
 use App\Application\Ticket\DTO\UpdateTicketData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Ticket\CreateTicketRequest;
+use App\Http\Requests\Api\V1\Ticket\DeleteTicketRequest;
 use App\Http\Requests\Api\V1\Ticket\UpdateTicketRequest;
 use App\Http\Resources\Api\V1\Ticket\TicketResource;
 use App\Domain\Event\Models\Event;
@@ -36,10 +37,8 @@ class TicketController extends Controller
         return $this->responder->success(TicketResource::make($ticket), 'Ticket updated successfully');
     }
 
-    public function destroy(Ticket $ticket): JsonResponse
+    public function destroy(DeleteTicketRequest $request, Ticket $ticket): JsonResponse
     {
-        $this->authorize('delete', $ticket);
-
         $this->ticketService->delete($ticket);
 
         return $this->responder->success(null, 'Ticket deleted successfully');

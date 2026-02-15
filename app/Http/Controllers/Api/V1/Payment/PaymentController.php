@@ -6,6 +6,7 @@ use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
 use App\Application\Payment\DTO\CreatePaymentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Payment\CreatePaymentRequest;
+use App\Http\Requests\Api\V1\Payment\ShowPaymentRequest;
 use App\Http\Resources\Api\V1\Payment\PaymentResource;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Payment\Models\Payment;
@@ -36,10 +37,8 @@ class PaymentController extends Controller
         return $this->responder->created(PaymentResource::make($payment), 'Payment processed successfully');
     }
 
-    public function show(Payment $payment): JsonResponse
+    public function show(ShowPaymentRequest $request, Payment $payment): JsonResponse
     {
-        $this->authorize('view', $payment);
-
         return $this->responder->success(PaymentResource::make($payment), 'OK');
     }
 }
