@@ -27,7 +27,6 @@ class BookingRepository implements BookingRepositoryInterface
         $booking->{Booking::COL_TICKET_ID} = $ticketId;
         $booking->{Booking::COL_QUANTITY} = $quantity;
         $booking->{Booking::COL_STATUS} = $status;
-        $booking->{Booking::COL_ACTIVE_BOOKING_KEY} = $this->makeActiveBookingKey($user->id, $ticketId, $status);
         $booking->save();
 
         return $booking;
@@ -49,22 +48,8 @@ class BookingRepository implements BookingRepositoryInterface
 
     public function save(Booking $booking): Booking
     {
-        $status = $booking->status instanceof BookingStatus
-            ? $booking->status
-            : BookingStatus::from((string) $booking->status);
-
-        $booking->{Booking::COL_ACTIVE_BOOKING_KEY} = $this->makeActiveBookingKey(
-            (int) $booking->{Booking::COL_USER_ID},
-            (int) $booking->{Booking::COL_TICKET_ID},
-            $status
-        );
         $booking->save();
 
         return $booking;
-    }
-
-    private function makeActiveBookingKey(int $userId, int $ticketId, BookingStatus $status): ?string
-    {
-        return $status->isActive() ? $userId.':'.$ticketId : null;
     }
 }
