@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BookingFactory extends Factory
 {
-    protected $model = \App\Domain\Booking\Models\Booking::class;
-
     /**
      * Define the model's default state.
      *

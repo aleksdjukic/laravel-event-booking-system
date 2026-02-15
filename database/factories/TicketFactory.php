@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TicketFactory extends Factory
 {
-    protected $model = \App\Domain\Ticket\Models\Ticket::class;
-
     /**
      * Define the model's default state.
      *
