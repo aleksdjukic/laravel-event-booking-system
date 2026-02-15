@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Payment\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,11 @@ class PaymentFactory extends Factory
         return [
             'booking_id' => fake()->unique()->numberBetween(1, 1000000),
             'amount' => number_format(fake()->randomFloat(2, 10, 500), 2, '.', ''),
-            'status' => fake()->randomElement(['success', 'failed', 'refunded']),
+            'status' => fake()->randomElement([
+                PaymentStatus::SUCCESS->value,
+                PaymentStatus::FAILED->value,
+                PaymentStatus::REFUNDED->value,
+            ]),
         ];
     }
 }

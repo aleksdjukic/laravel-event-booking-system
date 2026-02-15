@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
@@ -147,26 +149,26 @@ class DatabaseSeeder extends Seeder
         }
 
         $bookingsPlan = [
-            ['ticket_index' => 0, 'customer_index' => 0, 'quantity' => 2, 'status' => 'confirmed'],
-            ['ticket_index' => 1, 'customer_index' => 1, 'quantity' => 1, 'status' => 'pending'],
-            ['ticket_index' => 2, 'customer_index' => 2, 'quantity' => 3, 'status' => 'cancelled'],
-            ['ticket_index' => 3, 'customer_index' => 3, 'quantity' => 2, 'status' => 'confirmed'],
-            ['ticket_index' => 4, 'customer_index' => 4, 'quantity' => 5, 'status' => 'pending'],
-            ['ticket_index' => 5, 'customer_index' => 5, 'quantity' => 1, 'status' => 'confirmed'],
-            ['ticket_index' => 6, 'customer_index' => 6, 'quantity' => 4, 'status' => 'cancelled'],
-            ['ticket_index' => 7, 'customer_index' => 7, 'quantity' => 2, 'status' => 'pending'],
-            ['ticket_index' => 8, 'customer_index' => 8, 'quantity' => 3, 'status' => 'confirmed'],
-            ['ticket_index' => 9, 'customer_index' => 9, 'quantity' => 1, 'status' => 'pending'],
-            ['ticket_index' => 10, 'customer_index' => 0, 'quantity' => 2, 'status' => 'confirmed'],
-            ['ticket_index' => 11, 'customer_index' => 1, 'quantity' => 4, 'status' => 'pending'],
-            ['ticket_index' => 12, 'customer_index' => 2, 'quantity' => 1, 'status' => 'cancelled'],
-            ['ticket_index' => 13, 'customer_index' => 3, 'quantity' => 3, 'status' => 'confirmed'],
-            ['ticket_index' => 14, 'customer_index' => 4, 'quantity' => 2, 'status' => 'pending'],
-            ['ticket_index' => 0, 'customer_index' => 5, 'quantity' => 1, 'status' => 'pending'],
-            ['ticket_index' => 4, 'customer_index' => 6, 'quantity' => 2, 'status' => 'confirmed'],
-            ['ticket_index' => 8, 'customer_index' => 7, 'quantity' => 1, 'status' => 'pending'],
-            ['ticket_index' => 10, 'customer_index' => 8, 'quantity' => 2, 'status' => 'confirmed'],
-            ['ticket_index' => 14, 'customer_index' => 9, 'quantity' => 3, 'status' => 'cancelled'],
+            ['ticket_index' => 0, 'customer_index' => 0, 'quantity' => 2, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 1, 'customer_index' => 1, 'quantity' => 1, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 2, 'customer_index' => 2, 'quantity' => 3, 'status' => BookingStatus::CANCELLED],
+            ['ticket_index' => 3, 'customer_index' => 3, 'quantity' => 2, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 4, 'customer_index' => 4, 'quantity' => 5, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 5, 'customer_index' => 5, 'quantity' => 1, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 6, 'customer_index' => 6, 'quantity' => 4, 'status' => BookingStatus::CANCELLED],
+            ['ticket_index' => 7, 'customer_index' => 7, 'quantity' => 2, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 8, 'customer_index' => 8, 'quantity' => 3, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 9, 'customer_index' => 9, 'quantity' => 1, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 10, 'customer_index' => 0, 'quantity' => 2, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 11, 'customer_index' => 1, 'quantity' => 4, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 12, 'customer_index' => 2, 'quantity' => 1, 'status' => BookingStatus::CANCELLED],
+            ['ticket_index' => 13, 'customer_index' => 3, 'quantity' => 3, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 14, 'customer_index' => 4, 'quantity' => 2, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 0, 'customer_index' => 5, 'quantity' => 1, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 4, 'customer_index' => 6, 'quantity' => 2, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 8, 'customer_index' => 7, 'quantity' => 1, 'status' => BookingStatus::PENDING],
+            ['ticket_index' => 10, 'customer_index' => 8, 'quantity' => 2, 'status' => BookingStatus::CONFIRMED],
+            ['ticket_index' => 14, 'customer_index' => 9, 'quantity' => 3, 'status' => BookingStatus::CANCELLED],
         ];
 
         $bookings = collect();
@@ -176,11 +178,13 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $customers[$plan['customer_index']]->id,
                 'ticket_id' => $tickets[$plan['ticket_index']]->id,
                 'quantity' => $plan['quantity'],
-                'status' => $plan['status'],
+                'status' => $plan['status']->value,
             ]));
         }
 
-        $confirmedBookings = $bookings->where('status', 'confirmed')->values();
+        $confirmedBookings = $bookings
+            ->filter(fn (Booking $booking): bool => $booking->status === BookingStatus::CONFIRMED)
+            ->values();
 
         foreach ($confirmedBookings as $booking) {
             $ticket = $tickets->firstWhere('id', $booking->ticket_id);
@@ -188,24 +192,26 @@ class DatabaseSeeder extends Seeder
             \Database\Factories\PaymentFactory::new()->create([
                 'booking_id' => $booking->id,
                 'amount' => number_format($booking->quantity * (float) $ticket->price, 2, '.', ''),
-                'status' => 'success',
+                'status' => PaymentStatus::SUCCESS->value,
             ]);
         }
 
-        $cancelledBooking = $bookings->firstWhere('status', 'cancelled');
+        $cancelledBooking = $bookings->first(
+            fn (Booking $booking): bool => $booking->status === BookingStatus::CANCELLED
+        );
         if ($cancelledBooking !== null) {
             $cancelledTicket = $tickets->firstWhere('id', $cancelledBooking->ticket_id);
 
             \Database\Factories\PaymentFactory::new()->create([
                 'booking_id' => $cancelledBooking->id,
                 'amount' => number_format($cancelledBooking->quantity * (float) $cancelledTicket->price, 2, '.', ''),
-                'status' => 'failed',
+                'status' => PaymentStatus::FAILED->value,
             ]);
         }
 
         $confirmedByTicket = Booking::query()
             ->selectRaw('ticket_id, SUM(quantity) as confirmed_quantity')
-            ->where('status', 'confirmed')
+            ->where('status', BookingStatus::CONFIRMED->value)
             ->groupBy('ticket_id')
             ->get()
             ->keyBy('ticket_id');

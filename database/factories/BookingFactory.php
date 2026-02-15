@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,10 +23,10 @@ class BookingFactory extends Factory
             'ticket_id' => TicketFactory::new(),
             'quantity' => fake()->numberBetween(1, 5),
             'status' => fake()->randomElement([
-                'pending',
-                'pending',
-                'confirmed',
-                'cancelled',
+                BookingStatus::PENDING->value,
+                BookingStatus::PENDING->value,
+                BookingStatus::CONFIRMED->value,
+                BookingStatus::CANCELLED->value,
             ]),
         ];
     }
