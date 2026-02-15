@@ -7,15 +7,15 @@ use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Enums\Role;
-use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+use Tests\Concerns\CreatesUsers;
 use Tests\TestCase;
 
 class BookingFeatureTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesUsers;
 
     public function test_customer_can_create_booking_when_inventory_is_enough(): void
     {
@@ -133,18 +133,6 @@ class BookingFeatureTest extends TestCase
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.status', BookingStatus::CANCELLED->value);
-    }
-
-    private function createUser(Role $role, string $email): User
-    {
-        $user = new User();
-        $user->name = ucfirst($role->value).' User';
-        $user->email = $email;
-        $user->password = Hash::make('password123');
-        $user->role = $role;
-        $user->save();
-
-        return $user;
     }
 
     private function createTicket(int $quantity): Ticket

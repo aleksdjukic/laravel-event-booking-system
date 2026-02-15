@@ -12,14 +12,15 @@ use App\Domain\User\Models\User;
 use App\Infrastructure\Notifications\Booking\BookingConfirmedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\SendQueuedNotifications;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Sanctum\Sanctum;
+use Tests\Concerns\CreatesUsers;
 use Tests\TestCase;
 
 class PaymentNotificationQueueTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesUsers;
 
     public function test_successful_payment_queues_booking_confirmed_notification_job(): void
     {
@@ -58,18 +59,6 @@ class PaymentNotificationQueueTest extends TestCase
         Queue::assertNotPushed(SendQueuedNotifications::class, function (SendQueuedNotifications $job): bool {
             return $job->notification instanceof BookingConfirmedNotification;
         });
-    }
-
-    private function createUser(Role $role, string $email): User
-    {
-        $user = new User();
-        $user->name = ucfirst($role->value).' User';
-        $user->email = $email;
-        $user->password = Hash::make('password123');
-        $user->role = $role;
-        $user->save();
-
-        return $user;
     }
 
     private function createPendingBooking(User $customer, int $ticketQuantity, int $bookingQuantity): Booking

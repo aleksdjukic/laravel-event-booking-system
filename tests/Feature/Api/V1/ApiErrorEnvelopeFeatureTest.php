@@ -3,15 +3,15 @@
 namespace Tests\Feature\Api\V1;
 
 use App\Domain\User\Enums\Role;
-use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+use Tests\Concerns\CreatesUsers;
 use Tests\TestCase;
 
 class ApiErrorEnvelopeFeatureTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesUsers;
 
     public function test_validation_error_uses_uniform_envelope(): void
     {
@@ -64,17 +64,5 @@ class ApiErrorEnvelopeFeatureTest extends TestCase
             ->assertJsonPath('message', 'Not found')
             ->assertJsonPath('data', null)
             ->assertJsonPath('errors', null);
-    }
-
-    private function createUser(Role $role, string $email): User
-    {
-        $user = new User();
-        $user->name = ucfirst($role->value).' User';
-        $user->email = $email;
-        $user->password = Hash::make('password123');
-        $user->role = $role;
-        $user->save();
-
-        return $user;
     }
 }

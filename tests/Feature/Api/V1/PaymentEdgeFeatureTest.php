@@ -10,14 +10,15 @@ use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
+use Tests\Concerns\CreatesUsers;
 use Tests\TestCase;
 
 class PaymentEdgeFeatureTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesUsers;
 
     public function test_duplicate_payment_returns_409(): void
     {
@@ -135,18 +136,6 @@ class PaymentEdgeFeatureTest extends TestCase
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.id', $paymentId);
-    }
-
-    private function createUser(Role $role, string $email): User
-    {
-        $user = new User();
-        $user->name = ucfirst($role->value).' User';
-        $user->email = $email;
-        $user->password = Hash::make('password123');
-        $user->role = $role;
-        $user->save();
-
-        return $user;
     }
 
     private function createPendingBooking(User $customer, int $ticketQuantity, int $bookingQuantity): Booking
