@@ -17,7 +17,6 @@ use App\Domain\Payment\Models\Payment;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\User\Models\User;
-use App\Infrastructure\Notifications\Booking\BookingConfirmedNotification;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +33,7 @@ class ProcessPaymentAction
         private readonly AuthorizeBookingPaymentAction $authorizeBookingPaymentAction,
         private readonly EnsureBookingPayableAction $ensureBookingPayableAction,
         private readonly EnsureTicketInventoryForBookingAction $ensureTicketInventoryForBookingAction,
+        private readonly DispatchBookingConfirmedNotificationAction $dispatchBookingConfirmedNotificationAction,
     ) {
     }
 
@@ -101,17 +101,7 @@ class ProcessPaymentAction
             });
 
             if ($this->paymentTransitionGuard->canNotifyCustomer($payment->status) && is_array($notificationPayload)) {
-                $booking = $payment->{Payment::REL_BOOKING}->load(Booking::REL_USER);
-                $bookingUser = $booking->{Booking::REL_USER};
-
-                if ($bookingUser instanceof User) {
-                    $bookingUser->notify(new BookingConfirmedNotification(
-                        $notificationPayload['booking_id'],
-                        $notificationPayload['event_title'],
-                        $notificationPayload['ticket_type'],
-                        $notificationPayload['quantity'],
-                    ));
-                }
+                $this->dispatchBookingConfirmedNotificationAction->execute($payment, $notificationPayload);
             }
 
             return $payment->load(Payment::REL_BOOKING);
