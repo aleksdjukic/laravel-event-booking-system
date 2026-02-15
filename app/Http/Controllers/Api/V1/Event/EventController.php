@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Event;
 
 use App\Application\Contracts\Services\EventServiceInterface;
-use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\ListEventsData;
-use App\Application\Event\DTO\UpdateEventData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Event\ListEventsRequest;
 use App\Http\Requests\Api\V1\Event\CreateEventRequest;
@@ -26,7 +23,7 @@ class EventController extends Controller
 
     public function index(ListEventsRequest $request): JsonResponse
     {
-        $events = $this->eventService->index(ListEventsData::fromArray($request->validated()));
+        $events = $this->eventService->index($request->toDto());
 
         return $this->responder->success(EventResource::collection($events), 'OK');
     }
@@ -42,7 +39,7 @@ class EventController extends Controller
     {
         $event = $this->eventService->create(
             $request->user(),
-            CreateEventData::fromArray($request->validated())
+            $request->toDto()
         );
 
         return $this->responder->created(EventResource::make($event), 'Event created successfully');
@@ -50,7 +47,7 @@ class EventController extends Controller
 
     public function update(UpdateEventRequest $request, Event $event): JsonResponse
     {
-        $event = $this->eventService->update($event, UpdateEventData::fromArray($request->validated()));
+        $event = $this->eventService->update($event, $request->toDto());
 
         return $this->responder->success(EventResource::make($event), 'Event updated successfully');
     }

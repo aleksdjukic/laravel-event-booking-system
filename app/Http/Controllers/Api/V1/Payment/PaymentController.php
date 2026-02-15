@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Payment;
 
 use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
-use App\Application\Payment\DTO\CreatePaymentData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Payment\CreatePaymentRequest;
 use App\Http\Requests\Api\V1\Payment\ShowPaymentRequest;
@@ -23,15 +22,9 @@ class PaymentController extends Controller
 
     public function store(Booking $booking, CreatePaymentRequest $request): JsonResponse
     {
-        $forceSuccess = $request->input('force_success') === null
-            ? null
-            : $request->boolean('force_success');
-        $idempotencyKey = $request->header('Idempotency-Key');
-        $idempotencyKey = is_string($idempotencyKey) && $idempotencyKey !== '' ? $idempotencyKey : null;
-
         $payment = $this->paymentService->process(
             $request->user(),
-            CreatePaymentData::fromInput($booking->id, $forceSuccess, $idempotencyKey)
+            $request->toDto($booking)
         );
 
         return $this->responder->created(PaymentResource::make($payment), 'Payment processed successfully');

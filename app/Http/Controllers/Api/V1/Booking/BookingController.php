@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Booking;
 
 use App\Application\Contracts\Services\BookingServiceInterface;
-use App\Application\Booking\DTO\CreateBookingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Booking\CancelBookingRequest;
 use App\Http\Requests\Api\V1\Booking\CreateBookingRequest;
@@ -27,7 +26,7 @@ class BookingController extends Controller
         $booking = $this->bookingService->create(
             $request->user(),
             $ticket->id,
-            CreateBookingData::fromArray($request->validated())
+            $request->toDto()
         );
 
         return $this->responder->created(BookingResource::make($booking), 'Booking created successfully');

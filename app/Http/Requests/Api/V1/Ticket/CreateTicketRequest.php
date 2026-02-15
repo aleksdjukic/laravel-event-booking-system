@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Ticket;
 
+use App\Application\Ticket\DTO\CreateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,5 +26,10 @@ class CreateTicketRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'quantity' => ['required', 'integer', 'min:0'],
         ];
+    }
+
+    public function toDto(): CreateTicketData
+    {
+        return CreateTicketData::fromArray($this->validated());
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Ticket;
 
 use App\Application\Contracts\Services\TicketServiceInterface;
-use App\Application\Ticket\DTO\CreateTicketData;
-use App\Application\Ticket\DTO\UpdateTicketData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Ticket\CreateTicketRequest;
 use App\Http\Requests\Api\V1\Ticket\DeleteTicketRequest;
@@ -25,14 +23,14 @@ class TicketController extends Controller
 
     public function store(CreateTicketRequest $request, Event $event): JsonResponse
     {
-        $ticket = $this->ticketService->create($event, CreateTicketData::fromArray($request->validated()));
+        $ticket = $this->ticketService->create($event, $request->toDto());
 
         return $this->responder->created(TicketResource::make($ticket), 'Ticket created successfully');
     }
 
     public function update(UpdateTicketRequest $request, Ticket $ticket): JsonResponse
     {
-        $ticket = $this->ticketService->update($ticket, UpdateTicketData::fromArray($request->validated()));
+        $ticket = $this->ticketService->update($ticket, $request->toDto());
 
         return $this->responder->success(TicketResource::make($ticket), 'Ticket updated successfully');
     }

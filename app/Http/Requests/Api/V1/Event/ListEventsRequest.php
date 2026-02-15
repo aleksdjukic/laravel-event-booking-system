@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Event;
 
+use App\Application\Event\DTO\ListEventsData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListEventsRequest extends FormRequest
@@ -22,5 +23,10 @@ class ListEventsRequest extends FormRequest
             'location' => ['nullable', 'string', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
+    }
+
+    public function toDto(): ListEventsData
+    {
+        return ListEventsData::fromArray($this->validated());
     }
 }

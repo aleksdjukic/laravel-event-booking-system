@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Auth;
 
+use App\Application\Auth\DTO\RegisterData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,5 +24,10 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'phone' => ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    public function toDto(): RegisterData
+    {
+        return RegisterData::fromArray($this->validated());
     }
 }

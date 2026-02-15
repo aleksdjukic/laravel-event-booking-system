@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Application\Contracts\Services\AuthServiceInterface;
-use App\Application\Auth\DTO\LoginData;
-use App\Application\Auth\DTO\RegisterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
@@ -23,7 +21,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $payload = $this->authService->register(RegisterData::fromArray($request->validated()));
+        $payload = $this->authService->register($request->toDto());
 
         return $this->responder->created([
             'user' => UserResource::make($payload['user']),
@@ -33,7 +31,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $payload = $this->authService->login(LoginData::fromArray($request->validated()));
+        $payload = $this->authService->login($request->toDto());
         if ($payload === null) {
             return $this->responder->error('Invalid credentials.', 401);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Ticket;
 
+use App\Application\Ticket\DTO\UpdateTicketData;
 use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,5 +25,10 @@ class UpdateTicketRequest extends FormRequest
             'price' => ['sometimes', 'numeric', 'min:0'],
             'quantity' => ['sometimes', 'integer', 'min:0'],
         ];
+    }
+
+    public function toDto(): UpdateTicketData
+    {
+        return UpdateTicketData::fromArray($this->validated());
     }
 }
