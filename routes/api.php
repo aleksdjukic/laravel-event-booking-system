@@ -4,19 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Booking\BookingController;
 use App\Http\Controllers\Api\V1\Event\EventController;
+use App\Http\Controllers\Api\V1\Health\HealthController;
 use App\Http\Controllers\Api\V1\Payment\PaymentController;
 use App\Http\Controllers\Api\V1\Ticket\TicketController;
 use App\Http\Controllers\Api\V1\User\UserController;
 
 Route::prefix('v1')->group(function (): void {
-    Route::get('/ping', function () {
-        return response()->json([
-            'success' => true,
-            'message' => 'ok',
-            'data' => null,
-            'errors' => null,
-        ]);
-    });
+    Route::get('/ping', [HealthController::class, 'ping']);
 
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
