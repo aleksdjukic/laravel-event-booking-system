@@ -2,6 +2,7 @@
 
 use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Support\Database\SqlList;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -107,22 +108,11 @@ return new class extends Migration
 
     private function bookingStatusesSqlList(): string
     {
-        return $this->asSqlInList(BookingStatus::values());
+        return SqlList::inQuoted(BookingStatus::values());
     }
 
     private function paymentStatusesSqlList(): string
     {
-        return $this->asSqlInList(PaymentStatus::values());
-    }
-
-    /**
-     * @param  array<int, string>  $values
-     */
-    private function asSqlInList(array $values): string
-    {
-        return implode(', ', array_map(
-            static fn (string $value): string => "'".$value."'",
-            $values,
-        ));
+        return SqlList::inQuoted(PaymentStatus::values());
     }
 };
