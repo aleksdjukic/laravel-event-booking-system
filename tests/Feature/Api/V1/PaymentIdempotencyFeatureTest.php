@@ -72,6 +72,50 @@ class PaymentIdempotencyFeatureTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
+    public function test_idempotency_key_longer_than_128_characters_returns_422(): void
+    {
+        Notification::fake();
+
+        $customer = $this->createUser(Role::CUSTOMER, 'idempotency.validation@example.com');
+        $booking = $this->createPendingBooking($customer, 1, 90.0, 50);
+
+        Sanctum::actingAs($customer);
+
+        $this->withHeader('Idempotency-Key', str_repeat('a', 129))
+            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+                'force_success' => true,
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('success', false);
+    }
+
+    public function test_idempotency_key_is_trimmed_from_header(): void
+    {
+        Notification::fake();
+
+        $customer = $this->createUser(Role::CUSTOMER, 'idempotency.trim@example.com');
+        $booking = $this->createPendingBooking($customer, 1, 100.0, 50);
+
+        Sanctum::actingAs($customer);
+
+        $firstResponse = $this->withHeader('Idempotency-Key', '  idem-key-trimmed  ')
+            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+                'force_success' => true,
+            ]);
+
+        $firstResponse->assertStatus(201)->assertJsonPath('success', true);
+        $firstPaymentId = $firstResponse->json('data.id');
+
+        $secondResponse = $this->withHeader('Idempotency-Key', 'idem-key-trimmed')
+            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
+                'force_success' => true,
+            ]);
+
+        $secondResponse->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $firstPaymentId);
+    }
+
     private function createUser(Role $role, string $email): User
     {
         $user = new User();
