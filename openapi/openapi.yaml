@@ -10,7 +10,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      bearerFormat: SanctumToken
   parameters:
     IdempotencyKey:
       name: Idempotency-Key

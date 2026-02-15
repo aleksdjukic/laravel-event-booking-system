@@ -71,7 +71,7 @@ Status codes:
 - Invalidations use version bumping via `events:index:version` on event/ticket mutations.
 
 ## Design Decisions
-- `users.role` is stored as string in DB for portability and cast to `App\Enums\Role` in the `User` model.
+- `users.role` is stored as string in DB for portability and cast to `App\Domain\User\Enums\Role` in the `User` model.
 - `User -> payments` is implemented with `hasManyThrough` via `bookings`.
 - `tickets.quantity` is treated as remaining inventory and is decremented only after successful payment.
 
