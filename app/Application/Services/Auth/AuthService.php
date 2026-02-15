@@ -20,7 +20,7 @@ class AuthService implements AuthServiceInterface
         $user->name = $data->name;
         $user->email = $data->email;
         $user->phone = $data->phone;
-        $user->role = Role::CUSTOMER->value;
+        $user->role = Role::CUSTOMER;
         $user->password = Hash::make($data->password);
         $user->save();
 

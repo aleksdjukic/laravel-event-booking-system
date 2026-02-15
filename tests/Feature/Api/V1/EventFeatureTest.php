@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1;
 
 use App\Domain\Event\Support\EventCache;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -80,7 +81,7 @@ class EventFeatureTest extends TestCase
         $user->name = ucfirst($role).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = $role;
+        $user->role = Role::from($role);
         $user->save();
 
         return $user;

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Demo Admin',
                 'phone' => '0609990001',
-                'role' => 'admin',
+                'role' => Role::ADMIN->value,
                 'password' => Hash::make($demoPassword),
                 'email_verified_at' => now(),
             ]
@@ -39,7 +40,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Demo Organizer',
                 'phone' => '0609990002',
-                'role' => 'organizer',
+                'role' => Role::ORGANIZER->value,
                 'password' => Hash::make($demoPassword),
                 'email_verified_at' => now(),
             ]
@@ -50,7 +51,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Demo Customer',
                 'phone' => '0609990003',
-                'role' => 'customer',
+                'role' => Role::CUSTOMER->value,
                 'password' => Hash::make($demoPassword),
                 'email_verified_at' => now(),
             ]

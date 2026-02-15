@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\V1;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use App\Infrastructure\Notifications\Booking\BookingConfirmedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -63,7 +64,7 @@ class PaymentNotificationQueueTest extends TestCase
         $user->name = ucfirst($role).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = $role;
+        $user->role = Role::from($role);
         $user->save();
 
         return $user;

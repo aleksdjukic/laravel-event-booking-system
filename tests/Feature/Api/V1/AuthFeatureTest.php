@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -50,7 +51,7 @@ class AuthFeatureTest extends TestCase
         $user->name = 'Login User';
         $user->email = 'auth.login@example.com';
         $user->password = Hash::make('password123');
-        $user->role = 'customer';
+        $user->role = Role::CUSTOMER;
         $user->save();
 
         $response = $this->postJson('/api/v1/auth/login', [
@@ -74,7 +75,7 @@ class AuthFeatureTest extends TestCase
         $user->name = 'Me User';
         $user->email = 'auth.me@example.com';
         $user->password = Hash::make('password123');
-        $user->role = 'customer';
+        $user->role = Role::CUSTOMER;
         $user->save();
 
         Sanctum::actingAs($user);
@@ -92,7 +93,7 @@ class AuthFeatureTest extends TestCase
         $user->name = 'Logout User';
         $user->email = 'auth.logout@example.com';
         $user->password = Hash::make('password123');
-        $user->role = 'customer';
+        $user->role = Role::CUSTOMER;
         $user->save();
 
         $loginResponse = $this->postJson('/api/v1/auth/login', [

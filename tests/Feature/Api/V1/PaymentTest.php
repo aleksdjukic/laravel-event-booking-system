@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\V1;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
+use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use App\Infrastructure\Notifications\Booking\BookingConfirmedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,14 +26,14 @@ class PaymentTest extends TestCase
         $customer->name = 'Customer';
         $customer->email = 'customer.payment@example.com';
         $customer->password = Hash::make('password123');
-        $customer->role = 'customer';
+        $customer->role = Role::CUSTOMER;
         $customer->save();
 
         $organizer = new User();
         $organizer->name = 'Organizer';
         $organizer->email = 'organizer.payment@example.com';
         $organizer->password = Hash::make('password123');
-        $organizer->role = 'organizer';
+        $organizer->role = Role::ORGANIZER;
         $organizer->save();
 
         $event = new Event();
