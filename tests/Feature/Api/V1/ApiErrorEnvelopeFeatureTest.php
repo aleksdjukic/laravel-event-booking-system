@@ -30,7 +30,7 @@ class ApiErrorEnvelopeFeatureTest extends TestCase
 
     public function test_authorization_error_uses_uniform_envelope(): void
     {
-        $customer = $this->createUser('customer', 'envelope.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'envelope.customer@example.com');
         Sanctum::actingAs($customer);
 
         $response = $this->postJson('/api/v1/events', [
@@ -46,13 +46,13 @@ class ApiErrorEnvelopeFeatureTest extends TestCase
             ->assertJsonPath('data', null);
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;

@@ -18,7 +18,7 @@ class BookingFeatureTest extends TestCase
 
     public function test_customer_can_create_booking_when_inventory_is_enough(): void
     {
-        $customer = $this->createUser('customer', 'booking.customer.create@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'booking.customer.create@example.com');
         $ticket = $this->createTicket(5);
 
         Sanctum::actingAs($customer);
@@ -32,7 +32,7 @@ class BookingFeatureTest extends TestCase
 
     public function test_double_booking_returns_409_for_same_user_and_ticket(): void
     {
-        $customer = $this->createUser('customer', 'booking.customer.double@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'booking.customer.double@example.com');
         $ticket = $this->createTicket(8);
 
         Sanctum::actingAs($customer);
@@ -49,10 +49,10 @@ class BookingFeatureTest extends TestCase
 
     public function test_bookings_list_customer_sees_own_admin_sees_all_organizer_forbidden(): void
     {
-        $customerA = $this->createUser('customer', 'booking.customer.a@example.com');
-        $customerB = $this->createUser('customer', 'booking.customer.b@example.com');
-        $admin = $this->createUser('admin', 'booking.admin@example.com');
-        $organizer = $this->createUser('organizer', 'booking.organizer@example.com');
+        $customerA = $this->createUser(Role::CUSTOMER, 'booking.customer.a@example.com');
+        $customerB = $this->createUser(Role::CUSTOMER, 'booking.customer.b@example.com');
+        $admin = $this->createUser(Role::ADMIN, 'booking.admin@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'booking.organizer@example.com');
 
         $ticket = $this->createTicket(20);
 
@@ -89,8 +89,8 @@ class BookingFeatureTest extends TestCase
 
     public function test_cancel_rules_for_customer_and_admin(): void
     {
-        $customer = $this->createUser('customer', 'booking.cancel.customer@example.com');
-        $admin = $this->createUser('admin', 'booking.cancel.admin@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'booking.cancel.customer@example.com');
+        $admin = $this->createUser(Role::ADMIN, 'booking.cancel.admin@example.com');
         $ticket = $this->createTicket(30);
 
         $pendingBooking = new Booking();
@@ -134,13 +134,13 @@ class BookingFeatureTest extends TestCase
             ->assertJsonPath('data.status', 'cancelled');
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;
@@ -151,7 +151,7 @@ class BookingFeatureTest extends TestCase
         static $organizerIndex = 0;
         $organizerIndex++;
 
-        $organizer = $this->createUser('organizer', 'booking.organizer.'.$organizerIndex.'@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'booking.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
         $event->title = 'Booking Event';

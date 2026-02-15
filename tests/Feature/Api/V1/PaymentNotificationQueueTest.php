@@ -23,7 +23,7 @@ class PaymentNotificationQueueTest extends TestCase
     {
         Queue::fake();
 
-        $customer = $this->createUser('customer', 'queue.success.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'queue.success.customer@example.com');
         $booking = $this->createPendingBooking($customer, 10, 2);
 
         Sanctum::actingAs($customer);
@@ -43,7 +43,7 @@ class PaymentNotificationQueueTest extends TestCase
     {
         Queue::fake();
 
-        $customer = $this->createUser('customer', 'queue.failed.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'queue.failed.customer@example.com');
         $booking = $this->createPendingBooking($customer, 10, 2);
 
         Sanctum::actingAs($customer);
@@ -58,13 +58,13 @@ class PaymentNotificationQueueTest extends TestCase
         });
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;
@@ -75,7 +75,7 @@ class PaymentNotificationQueueTest extends TestCase
         static $organizerIndex = 0;
         $organizerIndex++;
 
-        $organizer = $this->createUser('organizer', 'queue.organizer.'.$organizerIndex.'@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'queue.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
         $event->title = 'Queue Event';

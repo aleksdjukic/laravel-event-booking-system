@@ -31,7 +31,7 @@ class ApiSuccessEnvelopeFeatureTest extends TestCase
 
     public function test_authenticated_profile_uses_uniform_success_envelope(): void
     {
-        $user = $this->createUser('customer', 'success.envelope@example.com');
+        $user = $this->createUser(Role::CUSTOMER, 'success.envelope@example.com');
         Sanctum::actingAs($user);
 
         $this->getJson('/api/v1/user/me')
@@ -43,7 +43,7 @@ class ApiSuccessEnvelopeFeatureTest extends TestCase
 
     public function test_events_index_uses_uniform_success_envelope_with_paginated_data(): void
     {
-        $organizer = $this->createUser('organizer', 'success.organizer@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'success.organizer@example.com');
 
         $event = new Event();
         $event->title = 'Success Event';
@@ -66,13 +66,13 @@ class ApiSuccessEnvelopeFeatureTest extends TestCase
             ]);
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;

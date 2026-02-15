@@ -17,7 +17,7 @@ class RbacFeatureTest extends TestCase
 
     public function test_customer_cannot_create_event(): void
     {
-        $customer = $this->createUser('customer', 'rbac.customer.event@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'rbac.customer.event@example.com');
 
         Sanctum::actingAs($customer);
 
@@ -31,8 +31,8 @@ class RbacFeatureTest extends TestCase
 
     public function test_customer_cannot_create_ticket(): void
     {
-        $customer = $this->createUser('customer', 'rbac.customer.ticket@example.com');
-        $organizer = $this->createUser('organizer', 'rbac.organizer.ticket.owner@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'rbac.customer.ticket@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.ticket.owner@example.com');
 
         $event = $this->createEvent($organizer, 'RBAC Event 1');
 
@@ -47,7 +47,7 @@ class RbacFeatureTest extends TestCase
 
     public function test_organizer_can_create_event(): void
     {
-        $organizer = $this->createUser('organizer', 'rbac.organizer.create.event@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.create.event@example.com');
 
         Sanctum::actingAs($organizer);
 
@@ -62,7 +62,7 @@ class RbacFeatureTest extends TestCase
 
     public function test_organizer_can_create_ticket_for_own_event(): void
     {
-        $organizer = $this->createUser('organizer', 'rbac.organizer.own.ticket@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.own.ticket@example.com');
         $event = $this->createEvent($organizer, 'Organizer Own Event');
 
         Sanctum::actingAs($organizer);
@@ -77,8 +77,8 @@ class RbacFeatureTest extends TestCase
 
     public function test_organizer_cannot_update_or_delete_another_organizer_event_or_ticket(): void
     {
-        $organizerA = $this->createUser('organizer', 'rbac.organizer.a@example.com');
-        $organizerB = $this->createUser('organizer', 'rbac.organizer.b@example.com');
+        $organizerA = $this->createUser(Role::ORGANIZER, 'rbac.organizer.a@example.com');
+        $organizerB = $this->createUser(Role::ORGANIZER, 'rbac.organizer.b@example.com');
 
         $event = $this->createEvent($organizerA, 'Organizer A Event');
         $ticket = $this->createTicket($event, 'Standard', 75.00, 10);
@@ -103,8 +103,8 @@ class RbacFeatureTest extends TestCase
 
     public function test_admin_can_update_and_delete_any_event_and_ticket(): void
     {
-        $admin = $this->createUser('admin', 'rbac.admin@example.com');
-        $organizer = $this->createUser('organizer', 'rbac.organizer.owner@example.com');
+        $admin = $this->createUser(Role::ADMIN, 'rbac.admin@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.owner@example.com');
 
         $event = $this->createEvent($organizer, 'Owner Event');
         $ticket = $this->createTicket($event, 'Regular', 40.00, 15);
@@ -133,7 +133,7 @@ class RbacFeatureTest extends TestCase
 
     public function test_organizer_cannot_create_duplicate_ticket_type_for_same_event(): void
     {
-        $organizer = $this->createUser('organizer', 'rbac.organizer.duplicate.create@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.duplicate.create@example.com');
         $event = $this->createEvent($organizer, 'Duplicate Ticket Event');
 
         Sanctum::actingAs($organizer);
@@ -154,7 +154,7 @@ class RbacFeatureTest extends TestCase
 
     public function test_organizer_cannot_update_ticket_to_duplicate_type_for_same_event(): void
     {
-        $organizer = $this->createUser('organizer', 'rbac.organizer.duplicate.update@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'rbac.organizer.duplicate.update@example.com');
         $event = $this->createEvent($organizer, 'Duplicate Update Event');
 
         $vipTicket = $this->createTicket($event, 'VIP', 120.00, 10);
@@ -173,13 +173,13 @@ class RbacFeatureTest extends TestCase
         ]);
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;

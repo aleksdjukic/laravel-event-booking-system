@@ -23,7 +23,7 @@ class EventFeatureTest extends TestCase
 
     public function test_events_index_supports_search_and_location_filter_and_pagination_shape(): void
     {
-        $organizer = $this->createUser('organizer', 'event.filter.organizer@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'event.filter.organizer@example.com');
 
         $this->postJson('/api/v1/auth/login', [
             'email' => $organizer->email,
@@ -62,7 +62,7 @@ class EventFeatureTest extends TestCase
     {
         Cache::put(EventCache::INDEX_VERSION_KEY, 1);
 
-        $organizer = $this->createUser('organizer', 'event.cache.organizer@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'event.cache.organizer@example.com');
         Sanctum::actingAs($organizer);
 
         $this->postJson('/api/v1/events', [
@@ -75,13 +75,13 @@ class EventFeatureTest extends TestCase
         $this->assertGreaterThanOrEqual(2, (int) Cache::get(EventCache::INDEX_VERSION_KEY));
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;

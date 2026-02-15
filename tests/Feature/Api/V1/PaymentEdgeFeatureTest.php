@@ -21,7 +21,7 @@ class PaymentEdgeFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customer = $this->createUser('customer', 'payment.duplicate.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'payment.duplicate.customer@example.com');
         $booking = $this->createPendingBooking($customer, 10, 2);
 
         Sanctum::actingAs($customer);
@@ -40,7 +40,7 @@ class PaymentEdgeFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customer = $this->createUser('customer', 'payment.inventory.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'payment.inventory.customer@example.com');
 
         $soldOutBooking = $this->createPendingBooking($customer, 0, 1);
         $notEnoughBooking = $this->createPendingBooking($customer, 1, 2);
@@ -62,8 +62,8 @@ class PaymentEdgeFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customerA = $this->createUser('customer', 'payment.customer.a@example.com');
-        $customerB = $this->createUser('customer', 'payment.customer.b@example.com');
+        $customerA = $this->createUser(Role::CUSTOMER, 'payment.customer.a@example.com');
+        $customerB = $this->createUser(Role::CUSTOMER, 'payment.customer.b@example.com');
 
         $booking = $this->createPendingBooking($customerA, 10, 2);
 
@@ -79,7 +79,7 @@ class PaymentEdgeFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customer = $this->createUser('customer', 'payment.force.fail.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'payment.force.fail.customer@example.com');
         $booking = $this->createPendingBooking($customer, 7, 3);
 
         $ticketId = $booking->ticket_id;
@@ -112,9 +112,9 @@ class PaymentEdgeFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customerA = $this->createUser('customer', 'payment.show.customer.a@example.com');
-        $customerB = $this->createUser('customer', 'payment.show.customer.b@example.com');
-        $admin = $this->createUser('admin', 'payment.show.admin@example.com');
+        $customerA = $this->createUser(Role::CUSTOMER, 'payment.show.customer.a@example.com');
+        $customerB = $this->createUser(Role::CUSTOMER, 'payment.show.customer.b@example.com');
+        $admin = $this->createUser(Role::ADMIN, 'payment.show.admin@example.com');
 
         $booking = $this->createPendingBooking($customerA, 10, 2);
 
@@ -135,13 +135,13 @@ class PaymentEdgeFeatureTest extends TestCase
             ->assertJsonPath('data.id', $paymentId);
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;
@@ -152,7 +152,7 @@ class PaymentEdgeFeatureTest extends TestCase
         static $organizerIndex = 0;
         $organizerIndex++;
 
-        $organizer = $this->createUser('organizer', 'payment.organizer.'.$organizerIndex.'@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'payment.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
         $event->title = 'Payment Edge Event';

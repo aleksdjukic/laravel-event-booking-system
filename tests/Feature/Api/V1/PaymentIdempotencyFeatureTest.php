@@ -21,7 +21,7 @@ class PaymentIdempotencyFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customer = $this->createUser('customer', 'idempotency.customer@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'idempotency.customer@example.com');
         $booking = $this->createPendingBooking($customer, 2, 100.0, 50);
 
         Sanctum::actingAs($customer);
@@ -50,7 +50,7 @@ class PaymentIdempotencyFeatureTest extends TestCase
     {
         Notification::fake();
 
-        $customer = $this->createUser('customer', 'idempotency.reuse@example.com');
+        $customer = $this->createUser(Role::CUSTOMER, 'idempotency.reuse@example.com');
         $firstBooking = $this->createPendingBooking($customer, 1, 90.0, 50);
         $secondBooking = $this->createPendingBooking($customer, 1, 90.0, 50);
 
@@ -71,13 +71,13 @@ class PaymentIdempotencyFeatureTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
-    private function createUser(string $role, string $email): User
+    private function createUser(Role $role, string $email): User
     {
         $user = new User();
-        $user->name = ucfirst($role).' User';
+        $user->name = ucfirst($role->value).' User';
         $user->email = $email;
         $user->password = Hash::make('password123');
-        $user->role = Role::from($role);
+        $user->role = $role;
         $user->save();
 
         return $user;
@@ -88,7 +88,7 @@ class PaymentIdempotencyFeatureTest extends TestCase
         static $organizerIndex = 0;
         $organizerIndex++;
 
-        $organizer = $this->createUser('organizer', 'idempotency.organizer.'.$organizerIndex.'@example.com');
+        $organizer = $this->createUser(Role::ORGANIZER, 'idempotency.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
         $event->title = 'Idempotency Event '.$organizerIndex;
