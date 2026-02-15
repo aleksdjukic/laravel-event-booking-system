@@ -3,7 +3,7 @@
 [![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
 [![Sanctum](https://img.shields.io/badge/Auth-Sanctum-0EA5E9)](https://laravel.com/docs/12.x/sanctum)
-[![CI](https://github.com/aleksdjukic/event-booking/actions/workflows/ci.yml/badge.svg)](https://github.com/aleksdjukic/event-booking/actions/workflows/ci.yml)
+[![CI](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-passing-16A34A)](https://phpstan.org/)
 [![Tests](https://img.shields.io/badge/Tests-50%20passing-16A34A)](./tests)
 [![API](https://img.shields.io/badge/API-Versioned%20(v1)-2563EB)](./routes/api.php)
