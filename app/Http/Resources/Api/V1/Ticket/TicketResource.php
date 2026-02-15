@@ -20,8 +20,8 @@ class TicketResource extends JsonResource
             'type' => $this->{Ticket::COL_TYPE},
             'price' => $this->{Ticket::COL_PRICE},
             'quantity' => $this->{Ticket::COL_QUANTITY},
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->{Ticket::COL_CREATED_AT},
+            'updated_at' => $this->{Ticket::COL_UPDATED_AT},
         ];
     }
 }

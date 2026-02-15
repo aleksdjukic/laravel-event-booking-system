@@ -20,8 +20,8 @@ class UserResource extends JsonResource
             'email' => $this->{User::COL_EMAIL},
             'phone' => $this->{User::COL_PHONE},
             'role' => $this->roleValue(),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->{User::COL_CREATED_AT},
+            'updated_at' => $this->{User::COL_UPDATED_AT},
         ];
     }
 }

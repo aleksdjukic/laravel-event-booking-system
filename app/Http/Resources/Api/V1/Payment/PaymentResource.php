@@ -24,8 +24,8 @@ class PaymentResource extends JsonResource
             'amount' => $this->{Payment::COL_AMOUNT},
             'status' => $status,
             'booking' => new BookingResource($this->whenLoaded(Payment::REL_BOOKING)),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->{Payment::COL_CREATED_AT},
+            'updated_at' => $this->{Payment::COL_UPDATED_AT},
         ];
     }
 }

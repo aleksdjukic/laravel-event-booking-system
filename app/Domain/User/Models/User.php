@@ -31,6 +31,8 @@ class User extends Authenticatable
     public const COL_ROLE = 'role';
     public const COL_REMEMBER_TOKEN = 'remember_token';
     public const COL_EMAIL_VERIFIED_AT = 'email_verified_at';
+    public const COL_CREATED_AT = 'created_at';
+    public const COL_UPDATED_AT = 'updated_at';
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;

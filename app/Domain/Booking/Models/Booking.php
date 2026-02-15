@@ -26,6 +26,8 @@ class Booking extends Model
     public const COL_QUANTITY = 'quantity';
     public const COL_STATUS = 'status';
     public const COL_ACTIVE_BOOKING_KEY = 'active_booking_key';
+    public const COL_CREATED_AT = 'created_at';
+    public const COL_UPDATED_AT = 'updated_at';
 
     /**
      * @var list<string>

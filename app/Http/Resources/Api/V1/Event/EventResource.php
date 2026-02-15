@@ -23,8 +23,8 @@ class EventResource extends JsonResource
             'location' => $this->{Event::COL_LOCATION},
             'created_by' => $this->{Event::COL_CREATED_BY},
             'tickets' => TicketResource::collection($this->whenLoaded(Event::REL_TICKETS)),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->{Event::COL_CREATED_AT},
+            'updated_at' => $this->{Event::COL_UPDATED_AT},
         ];
     }
 }

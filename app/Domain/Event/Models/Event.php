@@ -19,6 +19,8 @@ class Event extends Model
     public const COL_DATE = 'date';
     public const COL_LOCATION = 'location';
     public const COL_CREATED_BY = 'created_by';
+    public const COL_CREATED_AT = 'created_at';
+    public const COL_UPDATED_AT = 'updated_at';
 
     /**
      * @var list<string>

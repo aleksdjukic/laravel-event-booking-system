@@ -18,6 +18,8 @@ class PaymentIdempotencyKey extends Model
     public const COL_BOOKING_ID = 'booking_id';
     public const COL_IDEMPOTENCY_KEY = 'idempotency_key';
     public const COL_PAYMENT_ID = 'payment_id';
+    public const COL_CREATED_AT = 'created_at';
+    public const COL_UPDATED_AT = 'updated_at';
 
     /**
      * @var list<string>

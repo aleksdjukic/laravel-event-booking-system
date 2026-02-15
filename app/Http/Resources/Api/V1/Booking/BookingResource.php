@@ -27,8 +27,8 @@ class BookingResource extends JsonResource
             'status' => $status,
             'ticket' => new TicketResource($this->whenLoaded(Booking::REL_TICKET)),
             'payment' => new PaymentResource($this->whenLoaded(Booking::REL_PAYMENT)),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->{Booking::COL_CREATED_AT},
+            'updated_at' => $this->{Booking::COL_UPDATED_AT},
         ];
     }
 }
