@@ -11,6 +11,27 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'title',
+        'description',
+        'date',
+        'location',
+        'created_by',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'created_by' => 'integer',
+        ];
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo

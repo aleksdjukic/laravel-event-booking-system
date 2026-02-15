@@ -13,9 +13,23 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Payment extends Model
 {
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'booking_id',
+        'amount',
+        'status',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
+            'booking_id' => 'integer',
+            'amount' => 'float',
             'status' => PaymentStatus::class,
         ];
     }

@@ -10,9 +10,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PaymentIdempotencyKey extends Model
 {
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'booking_id',
+        'idempotency_key',
+        'payment_id',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'user_id' => 'integer',
+            'booking_id' => 'integer',
+            'payment_id' => 'integer',
+        ];
+    }
 
     /**
      * @return BelongsTo<User, $this>

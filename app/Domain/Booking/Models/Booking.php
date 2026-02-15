@@ -16,6 +16,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Booking extends Model
 {
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'ticket_id',
+        'quantity',
+        'status',
+        'active_booking_key',
+    ];
+
     protected static function booted(): void
     {
         static::saving(function (Booking $booking): void {
@@ -32,6 +43,9 @@ class Booking extends Model
     protected function casts(): array
     {
         return [
+            'user_id' => 'integer',
+            'ticket_id' => 'integer',
+            'quantity' => 'integer',
             'status' => BookingStatus::class,
         ];
     }

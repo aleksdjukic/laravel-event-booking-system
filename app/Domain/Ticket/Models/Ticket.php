@@ -14,6 +14,28 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'event_id',
+        'type',
+        'price',
+        'quantity',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'event_id' => 'integer',
+            'price' => 'float',
+            'quantity' => 'integer',
+        ];
+    }
+
+    /**
      * @return BelongsTo<Event, $this>
      */
     public function event(): BelongsTo
