@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventFactory extends Factory
 {
+    protected $model = \App\Domain\Event\Models\Event::class;
+
     /**
      * Define the model's default state.
      *

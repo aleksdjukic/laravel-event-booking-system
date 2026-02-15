@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class PaymentFactory extends Factory
 {
+    protected $model = \App\Domain\Payment\Models\Payment::class;
+
     /**
      * Define the model's default state.
      *
