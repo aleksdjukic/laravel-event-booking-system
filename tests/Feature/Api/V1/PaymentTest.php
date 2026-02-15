@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
@@ -55,7 +57,7 @@ class PaymentTest extends TestCase
         $booking->user_id = $customer->id;
         $booking->ticket_id = $ticket->id;
         $booking->quantity = 2;
-        $booking->status = 'pending';
+        $booking->status = BookingStatus::PENDING;
         $booking->save();
 
         Sanctum::actingAs($customer);
@@ -66,7 +68,7 @@ class PaymentTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.status', 'success');
+            ->assertJsonPath('data.status', PaymentStatus::SUCCESS->value);
 
         $this->assertDatabaseHas('bookings', [
             'id' => $booking->id,

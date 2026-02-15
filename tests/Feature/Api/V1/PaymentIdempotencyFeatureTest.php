@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
@@ -109,7 +110,7 @@ class PaymentIdempotencyFeatureTest extends TestCase
         $booking->user_id = $customer->id;
         $booking->ticket_id = $ticket->id;
         $booking->quantity = $quantity;
-        $booking->status = 'pending';
+        $booking->status = BookingStatus::PENDING;
         $booking->save();
 
         return $booking;

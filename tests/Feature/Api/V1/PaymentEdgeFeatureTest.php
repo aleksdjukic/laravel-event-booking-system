@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
@@ -89,7 +91,7 @@ class PaymentEdgeFeatureTest extends TestCase
         $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
             'force_success' => false,
         ])->assertStatus(201)
-            ->assertJsonPath('data.status', 'failed');
+            ->assertJsonPath('data.status', PaymentStatus::FAILED->value);
 
         $this->assertDatabaseHas('bookings', [
             'id' => $booking->id,
@@ -173,7 +175,7 @@ class PaymentEdgeFeatureTest extends TestCase
         $booking->user_id = $customer->id;
         $booking->ticket_id = $ticket->id;
         $booking->quantity = $bookingQuantity;
-        $booking->status = 'pending';
+        $booking->status = BookingStatus::PENDING;
         $booking->save();
 
         return $booking;

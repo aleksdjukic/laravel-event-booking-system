@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
@@ -27,7 +28,7 @@ class BookingFeatureTest extends TestCase
             'quantity' => 3,
         ])->assertStatus(201)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.status', 'pending');
+            ->assertJsonPath('data.status', BookingStatus::PENDING->value);
     }
 
     public function test_double_booking_returns_409_for_same_user_and_ticket(): void
@@ -60,14 +61,14 @@ class BookingFeatureTest extends TestCase
         $bookingA->user_id = $customerA->id;
         $bookingA->ticket_id = $ticket->id;
         $bookingA->quantity = 2;
-        $bookingA->status = 'pending';
+        $bookingA->status = BookingStatus::PENDING;
         $bookingA->save();
 
         $bookingB = new Booking();
         $bookingB->user_id = $customerB->id;
         $bookingB->ticket_id = $ticket->id;
         $bookingB->quantity = 1;
-        $bookingB->status = 'pending';
+        $bookingB->status = BookingStatus::PENDING;
         $bookingB->save();
 
         Sanctum::actingAs($customerA);
@@ -97,20 +98,20 @@ class BookingFeatureTest extends TestCase
         $pendingBooking->user_id = $customer->id;
         $pendingBooking->ticket_id = $ticket->id;
         $pendingBooking->quantity = 2;
-        $pendingBooking->status = 'pending';
+        $pendingBooking->status = BookingStatus::PENDING;
         $pendingBooking->save();
 
         Sanctum::actingAs($customer);
         $this->putJson('/api/v1/bookings/'.$pendingBooking->id.'/cancel')
             ->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.status', 'cancelled');
+            ->assertJsonPath('data.status', BookingStatus::CANCELLED->value);
 
         $confirmedBooking = new Booking();
         $confirmedBooking->user_id = $customer->id;
         $confirmedBooking->ticket_id = $ticket->id;
         $confirmedBooking->quantity = 1;
-        $confirmedBooking->status = 'confirmed';
+        $confirmedBooking->status = BookingStatus::CONFIRMED;
         $confirmedBooking->save();
 
         Sanctum::actingAs($customer);
@@ -124,14 +125,14 @@ class BookingFeatureTest extends TestCase
         $adminPendingBooking->user_id = $customer->id;
         $adminPendingBooking->ticket_id = $secondTicket->id;
         $adminPendingBooking->quantity = 1;
-        $adminPendingBooking->status = 'pending';
+        $adminPendingBooking->status = BookingStatus::PENDING;
         $adminPendingBooking->save();
 
         Sanctum::actingAs($admin);
         $this->putJson('/api/v1/bookings/'.$adminPendingBooking->id.'/cancel')
             ->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.status', 'cancelled');
+            ->assertJsonPath('data.status', BookingStatus::CANCELLED->value);
     }
 
     private function createUser(Role $role, string $email): User
