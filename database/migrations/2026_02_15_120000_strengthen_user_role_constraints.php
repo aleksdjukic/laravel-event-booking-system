@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\User\Domain\Enums\Role;
-use App\Support\Database\SqlList;
+use App\Modules\Shared\Support\Database\SqlList;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;

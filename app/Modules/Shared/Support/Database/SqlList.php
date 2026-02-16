@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Database;
+namespace App\Modules\Shared\Support\Database;
 
 final class SqlList
 {
