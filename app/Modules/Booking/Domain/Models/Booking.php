@@ -6,7 +6,7 @@ use App\Modules\Payment\Domain\Models\Payment;
 use App\Modules\Ticket\Domain\Models\Ticket;
 use App\Modules\User\Domain\Models\User;
 use App\Modules\Booking\Domain\Enums\BookingStatus;
-use Database\Factories\BookingFactory;
+use Database\Factories\Modules\Booking\BookingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;

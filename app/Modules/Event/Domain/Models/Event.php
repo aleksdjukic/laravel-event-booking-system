@@ -4,7 +4,7 @@ namespace App\Modules\Event\Domain\Models;
 
 use App\Modules\Ticket\Domain\Models\Ticket;
 use App\Modules\User\Domain\Models\User;
-use Database\Factories\EventFactory;
+use Database\Factories\Modules\Event\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

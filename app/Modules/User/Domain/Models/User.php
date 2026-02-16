@@ -6,7 +6,7 @@ use App\Modules\Booking\Domain\Models\Booking;
 use App\Modules\Event\Domain\Models\Event;
 use App\Modules\Payment\Domain\Models\Payment;
 use App\Modules\User\Domain\Enums\Role;
-use Database\Factories\UserFactory;
+use Database\Factories\Modules\User\UserFactory;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,7 +35,7 @@ class User extends Authenticatable
     public const COL_CREATED_AT = 'created_at';
     public const COL_UPDATED_AT = 'updated_at';
 
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\Database\Factories\Modules\User\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     /**

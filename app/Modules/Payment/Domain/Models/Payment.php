@@ -4,7 +4,7 @@ namespace App\Modules\Payment\Domain\Models;
 
 use App\Modules\Booking\Domain\Models\Booking;
 use App\Modules\Payment\Domain\Enums\PaymentStatus;
-use Database\Factories\PaymentFactory;
+use Database\Factories\Modules\Payment\PaymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
