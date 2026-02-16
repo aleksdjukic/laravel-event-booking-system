@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Modules\Shared\Http;
 
+use App\Modules\Event\Application\DTO\CreateEventData;
 use App\Modules\User\Domain\Enums\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -34,10 +35,10 @@ class ApiErrorEnvelopeFeatureTest extends TestCase
         Sanctum::actingAs($customer);
 
         $response = $this->postJson('/api/v1/events', [
-            'title' => 'Blocked',
-            'description' => null,
-            'date' => '2026-10-01 12:00:00',
-            'location' => 'Belgrade',
+            CreateEventData::INPUT_TITLE => 'Blocked',
+            CreateEventData::INPUT_DESCRIPTION => null,
+            CreateEventData::INPUT_DATE => '2026-10-01 12:00:00',
+            CreateEventData::INPUT_LOCATION => 'Belgrade',
         ]);
 
         $response->assertStatus(403)

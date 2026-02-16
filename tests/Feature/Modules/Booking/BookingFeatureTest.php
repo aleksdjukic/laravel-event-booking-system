@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Modules\Booking;
 
+use App\Modules\Booking\Application\DTO\CreateBookingData;
 use App\Modules\Booking\Domain\Enums\BookingStatus;
 use App\Modules\Booking\Domain\Models\Booking;
 use App\Modules\Event\Domain\Models\Event;
@@ -24,8 +25,8 @@ class BookingFeatureTest extends TestCase
 
         Sanctum::actingAs($customer);
 
-        $this->postJson('/api/v1/tickets/'.$ticket->id.'/bookings', [
-            'quantity' => 3,
+        $this->postJson('/api/v1/tickets/'.$ticket->{Ticket::COL_ID}.'/bookings', [
+            CreateBookingData::INPUT_QUANTITY => 3,
         ])->assertStatus(201)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.status', BookingStatus::PENDING->value);
@@ -38,12 +39,12 @@ class BookingFeatureTest extends TestCase
 
         Sanctum::actingAs($customer);
 
-        $this->postJson('/api/v1/tickets/'.$ticket->id.'/bookings', [
-            'quantity' => 2,
+        $this->postJson('/api/v1/tickets/'.$ticket->{Ticket::COL_ID}.'/bookings', [
+            CreateBookingData::INPUT_QUANTITY => 2,
         ])->assertStatus(201);
 
-        $this->postJson('/api/v1/tickets/'.$ticket->id.'/bookings', [
-            'quantity' => 1,
+        $this->postJson('/api/v1/tickets/'.$ticket->{Ticket::COL_ID}.'/bookings', [
+            CreateBookingData::INPUT_QUANTITY => 1,
         ])->assertStatus(409)
             ->assertJsonPath('success', false);
     }
@@ -58,17 +59,17 @@ class BookingFeatureTest extends TestCase
         $ticket = $this->createTicket(20);
 
         $bookingA = new Booking();
-        $bookingA->user_id = $customerA->id;
-        $bookingA->ticket_id = $ticket->id;
-        $bookingA->quantity = 2;
-        $bookingA->status = BookingStatus::PENDING;
+        $bookingA->{Booking::COL_USER_ID} = $customerA->{\App\Modules\User\Domain\Models\User::COL_ID};
+        $bookingA->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $bookingA->{Booking::COL_QUANTITY} = 2;
+        $bookingA->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $bookingA->save();
 
         $bookingB = new Booking();
-        $bookingB->user_id = $customerB->id;
-        $bookingB->ticket_id = $ticket->id;
-        $bookingB->quantity = 1;
-        $bookingB->status = BookingStatus::PENDING;
+        $bookingB->{Booking::COL_USER_ID} = $customerB->{\App\Modules\User\Domain\Models\User::COL_ID};
+        $bookingB->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $bookingB->{Booking::COL_QUANTITY} = 1;
+        $bookingB->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $bookingB->save();
 
         Sanctum::actingAs($customerA);
@@ -76,7 +77,7 @@ class BookingFeatureTest extends TestCase
         $customerResponse->assertStatus(200)
             ->assertJsonPath('success', true);
         $this->assertCount(1, $customerResponse->json('data.data'));
-        $this->assertSame($bookingA->id, $customerResponse->json('data.data.0.id'));
+        $this->assertSame($bookingA->{Booking::COL_ID}, $customerResponse->json('data.data.0.id'));
 
         Sanctum::actingAs($admin);
         $adminResponse = $this->getJson('/api/v1/bookings');
@@ -95,41 +96,41 @@ class BookingFeatureTest extends TestCase
         $ticket = $this->createTicket(30);
 
         $pendingBooking = new Booking();
-        $pendingBooking->user_id = $customer->id;
-        $pendingBooking->ticket_id = $ticket->id;
-        $pendingBooking->quantity = 2;
-        $pendingBooking->status = BookingStatus::PENDING;
+        $pendingBooking->{Booking::COL_USER_ID} = $customer->{\App\Modules\User\Domain\Models\User::COL_ID};
+        $pendingBooking->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $pendingBooking->{Booking::COL_QUANTITY} = 2;
+        $pendingBooking->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $pendingBooking->save();
 
         Sanctum::actingAs($customer);
-        $this->putJson('/api/v1/bookings/'.$pendingBooking->id.'/cancel')
+        $this->putJson('/api/v1/bookings/'.$pendingBooking->{Booking::COL_ID}.'/cancel')
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.status', BookingStatus::CANCELLED->value);
 
         $confirmedBooking = new Booking();
-        $confirmedBooking->user_id = $customer->id;
-        $confirmedBooking->ticket_id = $ticket->id;
-        $confirmedBooking->quantity = 1;
-        $confirmedBooking->status = BookingStatus::CONFIRMED;
+        $confirmedBooking->{Booking::COL_USER_ID} = $customer->{\App\Modules\User\Domain\Models\User::COL_ID};
+        $confirmedBooking->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $confirmedBooking->{Booking::COL_QUANTITY} = 1;
+        $confirmedBooking->{Booking::COL_STATUS} = BookingStatus::CONFIRMED;
         $confirmedBooking->save();
 
         Sanctum::actingAs($customer);
-        $this->putJson('/api/v1/bookings/'.$confirmedBooking->id.'/cancel')
+        $this->putJson('/api/v1/bookings/'.$confirmedBooking->{Booking::COL_ID}.'/cancel')
             ->assertStatus(409)
             ->assertJsonPath('success', false);
 
         $secondTicket = $this->createTicket(10);
 
         $adminPendingBooking = new Booking();
-        $adminPendingBooking->user_id = $customer->id;
-        $adminPendingBooking->ticket_id = $secondTicket->id;
-        $adminPendingBooking->quantity = 1;
-        $adminPendingBooking->status = BookingStatus::PENDING;
+        $adminPendingBooking->{Booking::COL_USER_ID} = $customer->{\App\Modules\User\Domain\Models\User::COL_ID};
+        $adminPendingBooking->{Booking::COL_TICKET_ID} = $secondTicket->{Ticket::COL_ID};
+        $adminPendingBooking->{Booking::COL_QUANTITY} = 1;
+        $adminPendingBooking->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $adminPendingBooking->save();
 
         Sanctum::actingAs($admin);
-        $this->putJson('/api/v1/bookings/'.$adminPendingBooking->id.'/cancel')
+        $this->putJson('/api/v1/bookings/'.$adminPendingBooking->{Booking::COL_ID}.'/cancel')
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.status', BookingStatus::CANCELLED->value);
@@ -143,18 +144,18 @@ class BookingFeatureTest extends TestCase
         $organizer = $this->createUser(Role::ORGANIZER, 'booking.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
-        $event->title = 'Booking Event';
-        $event->description = null;
-        $event->date = '2026-09-01 12:00:00';
-        $event->location = 'Belgrade';
-        $event->created_by = $organizer->id;
+        $event->{Event::COL_TITLE} = 'Booking Event';
+        $event->{Event::COL_DESCRIPTION} = null;
+        $event->{Event::COL_DATE} = '2026-09-01 12:00:00';
+        $event->{Event::COL_LOCATION} = 'Belgrade';
+        $event->{Event::COL_CREATED_BY} = $organizer->{\App\Modules\User\Domain\Models\User::COL_ID};
         $event->save();
 
         $ticket = new Ticket();
-        $ticket->event_id = $event->id;
-        $ticket->type = 'Standard';
-        $ticket->price = 50.00;
-        $ticket->quantity = $quantity;
+        $ticket->{Ticket::COL_EVENT_ID} = $event->{Event::COL_ID};
+        $ticket->{Ticket::COL_TYPE} = 'Standard';
+        $ticket->{Ticket::COL_PRICE} = 50.00;
+        $ticket->{Ticket::COL_QUANTITY} = $quantity;
         $ticket->save();
 
         return $ticket;

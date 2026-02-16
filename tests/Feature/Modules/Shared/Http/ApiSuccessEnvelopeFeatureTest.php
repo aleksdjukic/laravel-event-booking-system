@@ -46,11 +46,11 @@ class ApiSuccessEnvelopeFeatureTest extends TestCase
         $organizer = $this->createUser(Role::ORGANIZER, 'success.organizer@example.com');
 
         $event = new Event();
-        $event->title = 'Success Event';
-        $event->description = null;
-        $event->date = '2026-10-12 10:00:00';
-        $event->location = 'Belgrade';
-        $event->created_by = $organizer->id;
+        $event->{Event::COL_TITLE} = 'Success Event';
+        $event->{Event::COL_DESCRIPTION} = null;
+        $event->{Event::COL_DATE} = '2026-10-12 10:00:00';
+        $event->{Event::COL_LOCATION} = 'Belgrade';
+        $event->{Event::COL_CREATED_BY} = $organizer->{\App\Modules\User\Domain\Models\User::COL_ID};
         $event->save();
 
         $this->getJson('/api/v1/events?page=1')

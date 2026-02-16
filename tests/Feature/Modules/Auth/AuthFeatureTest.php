@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Modules\Auth;
 
+use App\Modules\Auth\Application\DTO\LoginData;
+use App\Modules\Auth\Application\DTO\RegisterData;
 use App\Modules\User\Domain\Enums\Role;
 use App\Modules\User\Domain\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,14 +16,16 @@ class AuthFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const INPUT_PASSWORD_CONFIRMATION = 'password_confirmation';
+
     public function test_register_returns_201(): void
     {
         $response = $this->postJson('/api/v1/auth/register', [
-            'name' => 'Auth User',
-            'email' => 'auth.register@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'phone' => '0601234567',
+            RegisterData::INPUT_NAME => 'Auth User',
+            RegisterData::INPUT_EMAIL => 'auth.register@example.com',
+            RegisterData::INPUT_PASSWORD => 'password123',
+            self::INPUT_PASSWORD_CONFIRMATION => 'password123',
+            RegisterData::INPUT_PHONE => '0601234567',
         ]);
 
         $response->assertStatus(201)
@@ -32,12 +36,12 @@ class AuthFeatureTest extends TestCase
     public function test_register_ignores_role_and_always_creates_customer(): void
     {
         $response = $this->postJson('/api/v1/auth/register', [
-            'name' => 'Auth User Role',
-            'email' => 'auth.register.role@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'phone' => '0601234567',
-            'role' => Role::ADMIN->value,
+            RegisterData::INPUT_NAME => 'Auth User Role',
+            RegisterData::INPUT_EMAIL => 'auth.register.role@example.com',
+            RegisterData::INPUT_PASSWORD => 'password123',
+            self::INPUT_PASSWORD_CONFIRMATION => 'password123',
+            RegisterData::INPUT_PHONE => '0601234567',
+            User::COL_ROLE => Role::ADMIN->value,
         ]);
 
         $response->assertStatus(201)
@@ -48,15 +52,15 @@ class AuthFeatureTest extends TestCase
     public function test_login_returns_token(): void
     {
         $user = new User();
-        $user->name = 'Login User';
-        $user->email = 'auth.login@example.com';
-        $user->password = Hash::make('password123');
-        $user->role = Role::CUSTOMER;
+        $user->{User::COL_NAME} = 'Login User';
+        $user->{User::COL_EMAIL} = 'auth.login@example.com';
+        $user->{User::COL_PASSWORD} = Hash::make('password123');
+        $user->{User::COL_ROLE} = Role::CUSTOMER;
         $user->save();
 
         $response = $this->postJson('/api/v1/auth/login', [
-            'email' => 'auth.login@example.com',
-            'password' => 'password123',
+            LoginData::INPUT_EMAIL => 'auth.login@example.com',
+            LoginData::INPUT_PASSWORD => 'password123',
         ]);
 
         $response->assertStatus(200)
@@ -72,10 +76,10 @@ class AuthFeatureTest extends TestCase
     public function test_me_returns_current_user_when_authenticated(): void
     {
         $user = new User();
-        $user->name = 'Me User';
-        $user->email = 'auth.me@example.com';
-        $user->password = Hash::make('password123');
-        $user->role = Role::CUSTOMER;
+        $user->{User::COL_NAME} = 'Me User';
+        $user->{User::COL_EMAIL} = 'auth.me@example.com';
+        $user->{User::COL_PASSWORD} = Hash::make('password123');
+        $user->{User::COL_ROLE} = Role::CUSTOMER;
         $user->save();
 
         Sanctum::actingAs($user);
@@ -90,15 +94,15 @@ class AuthFeatureTest extends TestCase
     public function test_logout_invalidates_token(): void
     {
         $user = new User();
-        $user->name = 'Logout User';
-        $user->email = 'auth.logout@example.com';
-        $user->password = Hash::make('password123');
-        $user->role = Role::CUSTOMER;
+        $user->{User::COL_NAME} = 'Logout User';
+        $user->{User::COL_EMAIL} = 'auth.logout@example.com';
+        $user->{User::COL_PASSWORD} = Hash::make('password123');
+        $user->{User::COL_ROLE} = Role::CUSTOMER;
         $user->save();
 
         $loginResponse = $this->postJson('/api/v1/auth/login', [
-            'email' => 'auth.logout@example.com',
-            'password' => 'password123',
+            LoginData::INPUT_EMAIL => 'auth.logout@example.com',
+            LoginData::INPUT_PASSWORD => 'password123',
         ]);
 
         $token = $loginResponse->json('data.token');

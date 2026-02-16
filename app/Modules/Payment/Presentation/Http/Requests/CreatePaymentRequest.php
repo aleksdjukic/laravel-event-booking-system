@@ -8,8 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreatePaymentRequest extends FormRequest
 {
-    private const INPUT_IDEMPOTENCY_KEY = 'idempotency_key';
-    private const INPUT_FORCE_SUCCESS = 'force_success';
+    public const INPUT_IDEMPOTENCY_KEY = 'idempotency_key';
+    public const INPUT_FORCE_SUCCESS = 'force_success';
 
     public function authorize(): bool
     {

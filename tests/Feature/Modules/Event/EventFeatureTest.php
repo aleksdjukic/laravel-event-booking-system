@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\Modules\Event;
 
+use App\Modules\Auth\Application\DTO\LoginData;
+use App\Modules\Event\Application\DTO\CreateEventData;
 use App\Modules\Event\Domain\Support\EventCache;
 use App\Modules\User\Domain\Enums\Role;
+use App\Modules\User\Domain\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\Sanctum;
@@ -26,24 +29,24 @@ class EventFeatureTest extends TestCase
         $organizer = $this->createUser(Role::ORGANIZER, 'event.filter.organizer@example.com');
 
         $this->postJson('/api/v1/auth/login', [
-            'email' => $organizer->email,
-            'password' => 'password123',
+            LoginData::INPUT_EMAIL => $organizer->{User::COL_EMAIL},
+            LoginData::INPUT_PASSWORD => 'password123',
         ]);
 
         Sanctum::actingAs($organizer);
 
         $this->postJson('/api/v1/events', [
-            'title' => 'Tech Summit',
-            'description' => null,
-            'date' => '2026-09-01 10:00:00',
-            'location' => 'Belgrade',
+            CreateEventData::INPUT_TITLE => 'Tech Summit',
+            CreateEventData::INPUT_DESCRIPTION => null,
+            CreateEventData::INPUT_DATE => '2026-09-01 10:00:00',
+            CreateEventData::INPUT_LOCATION => 'Belgrade',
         ])->assertStatus(201);
 
         $this->postJson('/api/v1/events', [
-            'title' => 'Music Night',
-            'description' => null,
-            'date' => '2026-09-02 10:00:00',
-            'location' => 'Novi Sad',
+            CreateEventData::INPUT_TITLE => 'Music Night',
+            CreateEventData::INPUT_DESCRIPTION => null,
+            CreateEventData::INPUT_DATE => '2026-09-02 10:00:00',
+            CreateEventData::INPUT_LOCATION => 'Novi Sad',
         ])->assertStatus(201);
 
         $response = $this->getJson('/api/v1/events?search=Tech&location=Belgrade&page=1');
@@ -66,10 +69,10 @@ class EventFeatureTest extends TestCase
         Sanctum::actingAs($organizer);
 
         $this->postJson('/api/v1/events', [
-            'title' => 'Cache Event',
-            'description' => null,
-            'date' => '2026-09-03 10:00:00',
-            'location' => 'Nis',
+            CreateEventData::INPUT_TITLE => 'Cache Event',
+            CreateEventData::INPUT_DESCRIPTION => null,
+            CreateEventData::INPUT_DATE => '2026-09-03 10:00:00',
+            CreateEventData::INPUT_LOCATION => 'Nis',
         ])->assertStatus(201);
 
         $this->assertGreaterThanOrEqual(2, (int) Cache::get(EventCache::INDEX_VERSION_KEY));

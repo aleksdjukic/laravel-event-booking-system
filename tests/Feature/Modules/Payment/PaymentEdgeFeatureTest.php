@@ -6,6 +6,8 @@ use App\Modules\Booking\Domain\Enums\BookingStatus;
 use App\Modules\Booking\Domain\Models\Booking;
 use App\Modules\Event\Domain\Models\Event;
 use App\Modules\Payment\Domain\Enums\PaymentStatus;
+use App\Modules\Payment\Domain\Models\Payment;
+use App\Modules\Payment\Presentation\Http\Requests\CreatePaymentRequest;
 use App\Modules\Ticket\Domain\Models\Ticket;
 use App\Modules\User\Domain\Enums\Role;
 use App\Modules\User\Domain\Models\User;
@@ -29,12 +31,12 @@ class PaymentEdgeFeatureTest extends TestCase
 
         Sanctum::actingAs($customer);
 
-        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-            'force_success' => true,
+        $this->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(201);
 
-        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-            'force_success' => true,
+        $this->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(409)
             ->assertJsonPath('success', false);
     }
@@ -50,13 +52,13 @@ class PaymentEdgeFeatureTest extends TestCase
 
         Sanctum::actingAs($customer);
 
-        $this->postJson('/api/v1/bookings/'.$soldOutBooking->id.'/payment', [
-            'force_success' => true,
+        $this->postJson('/api/v1/bookings/'.$soldOutBooking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(409)
             ->assertJsonPath('message', 'Ticket is sold out.');
 
-        $this->postJson('/api/v1/bookings/'.$notEnoughBooking->id.'/payment', [
-            'force_success' => true,
+        $this->postJson('/api/v1/bookings/'.$notEnoughBooking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(409)
             ->assertJsonPath('message', 'Not enough ticket inventory.');
     }
@@ -72,8 +74,8 @@ class PaymentEdgeFeatureTest extends TestCase
 
         Sanctum::actingAs($customerB);
 
-        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-            'force_success' => true,
+        $this->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(403)
             ->assertJsonPath('success', false);
     }
@@ -85,29 +87,29 @@ class PaymentEdgeFeatureTest extends TestCase
         $customer = $this->createUser(Role::CUSTOMER, 'payment.force.fail.customer@example.com');
         $booking = $this->createPendingBooking($customer, 7, 3);
 
-        $ticketId = $booking->ticket_id;
+        $ticketId = (int) $booking->{Booking::COL_TICKET_ID};
 
         Sanctum::actingAs($customer);
 
-        $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-            'force_success' => false,
+        $this->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => false,
         ])->assertStatus(201)
             ->assertJsonPath('data.status', PaymentStatus::FAILED->value);
 
-        $this->assertDatabaseHas('bookings', [
-            'id' => $booking->id,
-            'status' => BookingStatus::CANCELLED->value,
+        $this->assertDatabaseHas(Booking::TABLE, [
+            Booking::COL_ID => $booking->{Booking::COL_ID},
+            Booking::COL_STATUS => BookingStatus::CANCELLED->value,
         ]);
 
-        $this->assertDatabaseHas('payments', [
-            'booking_id' => $booking->id,
-            'status' => PaymentStatus::FAILED->value,
-            'amount' => '240.00',
+        $this->assertDatabaseHas(Payment::TABLE, [
+            Payment::COL_BOOKING_ID => $booking->{Booking::COL_ID},
+            Payment::COL_STATUS => PaymentStatus::FAILED->value,
+            Payment::COL_AMOUNT => '240.00',
         ]);
 
-        $this->assertDatabaseHas('tickets', [
-            'id' => $ticketId,
-            'quantity' => 7,
+        $this->assertDatabaseHas(Ticket::TABLE, [
+            Ticket::COL_ID => $ticketId,
+            Ticket::COL_QUANTITY => 7,
         ]);
     }
 
@@ -122,8 +124,8 @@ class PaymentEdgeFeatureTest extends TestCase
         $booking = $this->createPendingBooking($customerA, 10, 2);
 
         Sanctum::actingAs($customerA);
-        $paymentResponse = $this->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-            'force_success' => true,
+        $paymentResponse = $this->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+            CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
         ])->assertStatus(201);
 
         $paymentId = (int) $paymentResponse->json('data.id');
@@ -146,25 +148,25 @@ class PaymentEdgeFeatureTest extends TestCase
         $organizer = $this->createUser(Role::ORGANIZER, 'payment.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
-        $event->title = 'Payment Edge Event';
-        $event->description = null;
-        $event->date = '2026-10-01 10:00:00';
-        $event->location = 'Novi Sad';
-        $event->created_by = $organizer->id;
+        $event->{Event::COL_TITLE} = 'Payment Edge Event';
+        $event->{Event::COL_DESCRIPTION} = null;
+        $event->{Event::COL_DATE} = '2026-10-01 10:00:00';
+        $event->{Event::COL_LOCATION} = 'Novi Sad';
+        $event->{Event::COL_CREATED_BY} = $organizer->{User::COL_ID};
         $event->save();
 
         $ticket = new Ticket();
-        $ticket->event_id = $event->id;
-        $ticket->type = 'Standard';
-        $ticket->price = 80.00;
-        $ticket->quantity = $ticketQuantity;
+        $ticket->{Ticket::COL_EVENT_ID} = $event->{Event::COL_ID};
+        $ticket->{Ticket::COL_TYPE} = 'Standard';
+        $ticket->{Ticket::COL_PRICE} = 80.00;
+        $ticket->{Ticket::COL_QUANTITY} = $ticketQuantity;
         $ticket->save();
 
         $booking = new Booking();
-        $booking->user_id = $customer->id;
-        $booking->ticket_id = $ticket->id;
-        $booking->quantity = $bookingQuantity;
-        $booking->status = BookingStatus::PENDING;
+        $booking->{Booking::COL_USER_ID} = $customer->{User::COL_ID};
+        $booking->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $booking->{Booking::COL_QUANTITY} = $bookingQuantity;
+        $booking->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $booking->save();
 
         return $booking;

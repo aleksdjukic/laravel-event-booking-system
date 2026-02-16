@@ -5,6 +5,8 @@ namespace Tests\Feature\Modules\Payment;
 use App\Modules\Booking\Domain\Enums\BookingStatus;
 use App\Modules\Booking\Domain\Models\Booking;
 use App\Modules\Event\Domain\Models\Event;
+use App\Modules\Payment\Domain\Models\Payment;
+use App\Modules\Payment\Presentation\Http\Requests\CreatePaymentRequest;
 use App\Modules\Ticket\Domain\Models\Ticket;
 use App\Modules\User\Domain\Enums\Role;
 use App\Modules\User\Domain\Models\User;
@@ -29,23 +31,23 @@ class PaymentIdempotencyFeatureTest extends TestCase
         Sanctum::actingAs($customer);
 
         $firstResponse = $this->withHeader('Idempotency-Key', 'idem-key-1')
-            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ]);
 
         $firstResponse->assertStatus(201)->assertJsonPath('success', true);
         $firstPaymentId = $firstResponse->json('data.id');
 
         $secondResponse = $this->withHeader('Idempotency-Key', 'idem-key-1')
-            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ]);
 
         $secondResponse->assertStatus(201)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.id', $firstPaymentId);
 
-        $this->assertDatabaseCount('payments', 1);
+        $this->assertDatabaseCount(Payment::TABLE, 1);
     }
 
     public function test_idempotency_key_cannot_be_reused_for_another_booking(): void
@@ -59,15 +61,15 @@ class PaymentIdempotencyFeatureTest extends TestCase
         Sanctum::actingAs($customer);
 
         $this->withHeader('Idempotency-Key', 'idem-key-2')
-            ->postJson('/api/v1/bookings/'.$firstBooking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$firstBooking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ])
             ->assertStatus(201)
             ->assertJsonPath('success', true);
 
         $this->withHeader('Idempotency-Key', 'idem-key-2')
-            ->postJson('/api/v1/bookings/'.$secondBooking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$secondBooking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ])
             ->assertStatus(409)
             ->assertJsonPath('success', false);
@@ -83,8 +85,8 @@ class PaymentIdempotencyFeatureTest extends TestCase
         Sanctum::actingAs($customer);
 
         $this->withHeader('Idempotency-Key', str_repeat('a', 129))
-            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ])
             ->assertStatus(422)
             ->assertJsonPath('success', false);
@@ -100,16 +102,16 @@ class PaymentIdempotencyFeatureTest extends TestCase
         Sanctum::actingAs($customer);
 
         $firstResponse = $this->withHeader('Idempotency-Key', '  idem-key-trimmed  ')
-            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ]);
 
         $firstResponse->assertStatus(201)->assertJsonPath('success', true);
         $firstPaymentId = $firstResponse->json('data.id');
 
         $secondResponse = $this->withHeader('Idempotency-Key', 'idem-key-trimmed')
-            ->postJson('/api/v1/bookings/'.$booking->id.'/payment', [
-                'force_success' => true,
+            ->postJson('/api/v1/bookings/'.$booking->{Booking::COL_ID}.'/payment', [
+                CreatePaymentRequest::INPUT_FORCE_SUCCESS => true,
             ]);
 
         $secondResponse->assertStatus(201)
@@ -125,25 +127,25 @@ class PaymentIdempotencyFeatureTest extends TestCase
         $organizer = $this->createUser(Role::ORGANIZER, 'idempotency.organizer.'.$organizerIndex.'@example.com');
 
         $event = new Event();
-        $event->title = 'Idempotency Event '.$organizerIndex;
-        $event->description = null;
-        $event->date = '2026-11-01 10:00:00';
-        $event->location = 'Belgrade';
-        $event->created_by = $organizer->id;
+        $event->{Event::COL_TITLE} = 'Idempotency Event '.$organizerIndex;
+        $event->{Event::COL_DESCRIPTION} = null;
+        $event->{Event::COL_DATE} = '2026-11-01 10:00:00';
+        $event->{Event::COL_LOCATION} = 'Belgrade';
+        $event->{Event::COL_CREATED_BY} = $organizer->{User::COL_ID};
         $event->save();
 
         $ticket = new Ticket();
-        $ticket->event_id = $event->id;
-        $ticket->type = 'VIP';
-        $ticket->price = $price;
-        $ticket->quantity = $stock;
+        $ticket->{Ticket::COL_EVENT_ID} = $event->{Event::COL_ID};
+        $ticket->{Ticket::COL_TYPE} = 'VIP';
+        $ticket->{Ticket::COL_PRICE} = $price;
+        $ticket->{Ticket::COL_QUANTITY} = $stock;
         $ticket->save();
 
         $booking = new Booking();
-        $booking->user_id = $customer->id;
-        $booking->ticket_id = $ticket->id;
-        $booking->quantity = $quantity;
-        $booking->status = BookingStatus::PENDING;
+        $booking->{Booking::COL_USER_ID} = $customer->{User::COL_ID};
+        $booking->{Booking::COL_TICKET_ID} = $ticket->{Ticket::COL_ID};
+        $booking->{Booking::COL_QUANTITY} = $quantity;
+        $booking->{Booking::COL_STATUS} = BookingStatus::PENDING;
         $booking->save();
 
         return $booking;
