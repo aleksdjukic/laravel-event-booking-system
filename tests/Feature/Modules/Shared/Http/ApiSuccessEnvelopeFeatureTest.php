@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\V1;
+namespace Tests\Feature\Modules\Shared\Http;
 
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Enums\Role;

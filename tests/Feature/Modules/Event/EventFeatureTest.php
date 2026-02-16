@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\V1;
+namespace Tests\Feature\Modules\Event;
 
 use App\Domain\Event\Support\EventCache;
 use App\Domain\User\Enums\Role;
