@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application\Contracts\Services;
+namespace App\Modules\Event\Application\Contracts;
 
-use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\ListEventsData;
-use App\Application\Event\DTO\UpdateEventData;
+use App\Modules\Event\Application\DTO\CreateEventData;
+use App\Modules\Event\Application\DTO\ListEventsData;
+use App\Modules\Event\Application\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;

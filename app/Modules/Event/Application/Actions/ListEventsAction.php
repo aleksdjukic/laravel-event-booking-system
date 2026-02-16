@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Event\Actions;
+namespace App\Modules\Event\Application\Actions;
 
-use App\Application\Event\DTO\ListEventsData;
+use App\Modules\Event\Application\DTO\ListEventsData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Event\Repositories\EventRepositoryInterface;
 use App\Domain\Event\Support\EventCache;

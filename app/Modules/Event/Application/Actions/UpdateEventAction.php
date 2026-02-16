@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Event\Actions;
+namespace App\Modules\Event\Application\Actions;
 
-use App\Application\Event\DTO\UpdateEventData;
+use App\Modules\Event\Application\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Event\Repositories\EventRepositoryInterface;
 

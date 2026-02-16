@@ -2,7 +2,7 @@
 
 namespace App\Application\Ticket\Actions;
 
-use App\Application\Event\Actions\BumpEventIndexVersionAction;
+use App\Modules\Event\Application\Actions\BumpEventIndexVersionAction;
 use App\Application\Ticket\DTO\CreateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Shared\DomainError;

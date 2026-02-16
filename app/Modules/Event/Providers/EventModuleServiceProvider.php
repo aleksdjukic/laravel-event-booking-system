@@ -2,8 +2,8 @@
 
 namespace App\Modules\Event\Providers;
 
-use App\Application\Contracts\Services\EventServiceInterface;
-use App\Application\Services\Event\EventService;
+use App\Modules\Event\Application\Contracts\EventServiceInterface;
+use App\Modules\Event\Application\Services\EventService;
 use App\Domain\Event\Models\Event;
 use App\Domain\Event\Policies\EventPolicy;
 use App\Domain\Event\Repositories\EventRepositoryInterface;

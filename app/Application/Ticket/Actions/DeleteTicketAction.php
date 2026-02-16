@@ -2,7 +2,7 @@
 
 namespace App\Application\Ticket\Actions;
 
-use App\Application\Event\Actions\BumpEventIndexVersionAction;
+use App\Modules\Event\Application\Actions\BumpEventIndexVersionAction;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 

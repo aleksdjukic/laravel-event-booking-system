@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Application\Services\Event;
+namespace App\Modules\Event\Application\Services;
 
-use App\Application\Contracts\Services\EventServiceInterface;
-use App\Application\Event\Actions\CreateEventAction;
-use App\Application\Event\Actions\DeleteEventAction;
-use App\Application\Event\Actions\FindEventWithTicketsAction;
-use App\Application\Event\Actions\ListEventsAction;
-use App\Application\Event\Actions\UpdateEventAction;
-use App\Application\Event\DTO\CreateEventData;
-use App\Application\Event\DTO\ListEventsData;
-use App\Application\Event\DTO\UpdateEventData;
+use App\Modules\Event\Application\Contracts\EventServiceInterface;
+use App\Modules\Event\Application\Actions\CreateEventAction;
+use App\Modules\Event\Application\Actions\DeleteEventAction;
+use App\Modules\Event\Application\Actions\FindEventWithTicketsAction;
+use App\Modules\Event\Application\Actions\ListEventsAction;
+use App\Modules\Event\Application\Actions\UpdateEventAction;
+use App\Modules\Event\Application\DTO\CreateEventData;
+use App\Modules\Event\Application\DTO\ListEventsData;
+use App\Modules\Event\Application\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\User\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;

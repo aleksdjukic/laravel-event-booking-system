@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Event\Actions;
+namespace App\Modules\Event\Application\Actions;
 
 use App\Domain\Event\Support\EventCache;
 use Illuminate\Support\Facades\Cache;

@@ -2,7 +2,7 @@
 
 namespace App\Modules\Event\Presentation\Http\Requests;
 
-use App\Application\Event\DTO\ListEventsData;
+use App\Modules\Event\Application\DTO\ListEventsData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListEventsRequest extends FormRequest

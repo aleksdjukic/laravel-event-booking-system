@@ -2,7 +2,7 @@
 
 namespace App\Modules\Event\Presentation\Http\Requests;
 
-use App\Application\Event\DTO\UpdateEventData;
+use App\Modules\Event\Application\DTO\UpdateEventData;
 use App\Domain\Event\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
 
