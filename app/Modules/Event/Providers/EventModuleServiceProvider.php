@@ -4,9 +4,9 @@ namespace App\Modules\Event\Providers;
 
 use App\Modules\Event\Application\Contracts\EventServiceInterface;
 use App\Modules\Event\Application\Services\EventService;
-use App\Domain\Event\Models\Event;
-use App\Domain\Event\Policies\EventPolicy;
-use App\Domain\Event\Repositories\EventRepositoryInterface;
+use App\Modules\Event\Domain\Models\Event;
+use App\Modules\Event\Domain\Policies\EventPolicy;
+use App\Modules\Event\Domain\Repositories\EventRepositoryInterface;
 use App\Modules\Event\Infrastructure\Persistence\Eloquent\EventRepository;
 use App\Modules\Event\Infrastructure\Persistence\Eloquent\Observers\EventObserver;
 use Illuminate\Support\Facades\Gate;

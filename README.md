@@ -46,12 +46,11 @@ Key invariants:
 - Idempotency key cannot be reused for another booking.
 
 ## Architecture Snapshot
-- `app/Modules/*`: modular monolith slices (`Domain/Application/Infrastructure/Presentation`) per business capability.
-- `app/Domain/*`: domain models, enums, policies, repository interfaces, domain guards.
-- `app/Application/*`: use-case actions, DTOs, application services.
-- `app/Infrastructure/*`: Eloquent repositories, notifications, payment gateway adapter.
-- `app/Modules/*/Presentation/*`: module routes, controllers, requests, resources, middleware.
-- `app/Support/*`: API responder, shared helpers/traits.
+- `app/Modules/*/Domain/*`: models, enums, policies, repository interfaces, domain guards.
+- `app/Modules/*/Application/*`: use-case actions, DTOs, application services.
+- `app/Modules/*/Infrastructure/*`: Eloquent repositories, observers, payment gateway, notifications.
+- `app/Modules/*/Presentation/*`: routes, controllers, requests, resources, middleware.
+- `app/Modules/Shared/*`: shared domain errors, API responder, cross-module presentation/support utilities.
 
 Design direction:
 - Thin controllers

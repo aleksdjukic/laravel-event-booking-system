@@ -4,11 +4,11 @@ namespace App\Modules\Payment\Providers;
 
 use App\Modules\Payment\Application\Contracts\PaymentTransactionServiceInterface;
 use App\Modules\Payment\Application\Services\PaymentTransactionService;
-use App\Domain\Payment\Models\Payment;
-use App\Domain\Payment\Policies\PaymentPolicy;
-use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
-use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
-use App\Domain\Payment\Services\PaymentGatewayInterface;
+use App\Modules\Payment\Domain\Models\Payment;
+use App\Modules\Payment\Domain\Policies\PaymentPolicy;
+use App\Modules\Payment\Domain\Repositories\PaymentIdempotencyRepositoryInterface;
+use App\Modules\Payment\Domain\Repositories\PaymentRepositoryInterface;
+use App\Modules\Payment\Domain\Services\PaymentGatewayInterface;
 use App\Modules\Payment\Infrastructure\PaymentGatewayService;
 use App\Modules\Payment\Infrastructure\Persistence\Eloquent\PaymentIdempotencyRepository;
 use App\Modules\Payment\Infrastructure\Persistence\Eloquent\PaymentRepository;
