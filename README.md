@@ -5,12 +5,13 @@
 [![Sanctum](https://img.shields.io/badge/Auth-Sanctum-0EA5E9)](https://laravel.com/docs/12.x/sanctum)
 [![CI](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-passing-16A34A)](https://phpstan.org/)
-[![Tests](https://img.shields.io/badge/Tests-50%20passing-16A34A)](./tests)
+[![Tests](https://img.shields.io/badge/Tests-passing-16A34A)](./tests)
 [![API](https://img.shields.io/badge/API-Versioned%20(v1)-2563EB)](./routes/api.php)
 
-Production-grade Laravel backend for event booking with clean domain structure, strong API contracts, RBAC, idempotent payments, caching, and queue-backed notifications.
+Production-grade Laravel backend for event booking built as a modular monolith (DDD-style), with strong API contracts, RBAC, idempotent payments, caching, and queue-backed notifications.
 
 ## Highlights
+- Modular monolith architecture with explicit module boundaries and layered design.
 - Versioned REST API (`/api/v1`) with uniform response envelope.
 - Sanctum authentication (register/login/logout/me).
 - Role-based authorization (`admin`, `organizer`, `customer`) via policies + middleware.
@@ -46,6 +47,20 @@ Key invariants:
 - Idempotency key cannot be reused for another booking.
 
 ## Architecture Snapshot
+Architecture style:
+- Modular monolith, domain-first (DDD-style).
+- Each module owns `Domain`, `Application`, `Infrastructure`, and `Presentation` layers.
+
+Core modules:
+- `Auth`
+- `User`
+- `Event`
+- `Ticket`
+- `Booking`
+- `Payment`
+- `Health`
+- `Shared`
+
 - `app/Modules/*/Domain/*`: models, enums, policies, repository interfaces, domain guards.
 - `app/Modules/*/Application/*`: use-case actions, DTOs, application services.
 - `app/Modules/*/Infrastructure/*`: Eloquent repositories, observers, payment gateway, notifications.
@@ -60,6 +75,7 @@ Design direction:
 
 ## DDD & Modern Backend Practices
 - Domain-first modular monolith with clear layer boundaries: `Domain`, `Application`, `Infrastructure`, `Presentation`.
+- Modules are isolated by responsibility and interact through contracts/use-cases, not ad-hoc cross-module calls.
 - Business rules are explicit (status enums, transition guards, policies, invariants).
 - Controllers are thin; validation is in Form Requests; use-cases live in application actions/services.
 - Interfaces define domain boundaries, while Eloquent/adapters stay in infrastructure.
