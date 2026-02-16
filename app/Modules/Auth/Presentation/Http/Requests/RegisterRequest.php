@@ -2,7 +2,7 @@
 
 namespace App\Modules\Auth\Presentation\Http\Requests;
 
-use App\Application\Auth\DTO\RegisterData;
+use App\Modules\Auth\Application\DTO\RegisterData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

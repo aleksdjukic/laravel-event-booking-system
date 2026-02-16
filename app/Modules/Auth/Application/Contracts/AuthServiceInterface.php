@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Application\Contracts\Services;
+namespace App\Modules\Auth\Application\Contracts;
 
-use App\Application\Auth\DTO\LoginData;
-use App\Application\Auth\DTO\RegisterData;
+use App\Modules\Auth\Application\DTO\LoginData;
+use App\Modules\Auth\Application\DTO\RegisterData;
 use App\Domain\User\Models\User;
 
 interface AuthServiceInterface

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application\Services\Auth;
+namespace App\Modules\Auth\Application\Services;
 
-use App\Application\Contracts\Services\AuthServiceInterface;
-use App\Application\Auth\DTO\LoginData;
-use App\Application\Auth\DTO\RegisterData;
+use App\Modules\Auth\Application\Contracts\AuthServiceInterface;
+use App\Modules\Auth\Application\DTO\LoginData;
+use App\Modules\Auth\Application\DTO\RegisterData;
 use App\Domain\User\Enums\Role;
 use App\Domain\User\Models\User;
 use Illuminate\Support\Facades\Hash;

@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Application\Auth\DTO;
+namespace App\Modules\Auth\Application\DTO;
 
-class RegisterData
+class LoginData
 {
     public function __construct(
-        public readonly string $name,
         public readonly string $email,
         public readonly string $password,
-        public readonly ?string $phone,
     ) {
     }
 
@@ -18,10 +16,8 @@ class RegisterData
     public static function fromArray(array $data): self
     {
         return new self(
-            name: (string) $data['name'],
             email: (string) $data['email'],
             password: (string) $data['password'],
-            phone: isset($data['phone']) ? (string) $data['phone'] : null,
         );
     }
 }

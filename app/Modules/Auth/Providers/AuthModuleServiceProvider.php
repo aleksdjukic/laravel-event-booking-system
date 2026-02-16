@@ -2,8 +2,8 @@
 
 namespace App\Modules\Auth\Providers;
 
-use App\Application\Contracts\Services\AuthServiceInterface;
-use App\Application\Services\Auth\AuthService;
+use App\Modules\Auth\Application\Contracts\AuthServiceInterface;
+use App\Modules\Auth\Application\Services\AuthService;
 use Illuminate\Support\ServiceProvider;
 
 class AuthModuleServiceProvider extends ServiceProvider

@@ -2,7 +2,7 @@
 
 namespace App\Modules\Auth\Presentation\Http\Requests;
 
-use App\Application\Auth\DTO\LoginData;
+use App\Modules\Auth\Application\DTO\LoginData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest

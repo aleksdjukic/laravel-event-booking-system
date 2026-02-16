@@ -2,7 +2,7 @@
 
 namespace App\Modules\Auth\Presentation\Http\Controllers;
 
-use App\Application\Contracts\Services\AuthServiceInterface;
+use App\Modules\Auth\Application\Contracts\AuthServiceInterface;
 use App\Modules\Shared\Presentation\Http\Controllers\ApiController;
 use App\Modules\Auth\Presentation\Http\Requests\LoginRequest;
 use App\Modules\Auth\Presentation\Http\Requests\RegisterRequest;
