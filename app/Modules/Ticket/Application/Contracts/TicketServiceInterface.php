@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Application\Contracts\Services;
+namespace App\Modules\Ticket\Application\Contracts;
 
-use App\Application\Ticket\DTO\CreateTicketData;
-use App\Application\Ticket\DTO\UpdateTicketData;
+use App\Modules\Ticket\Application\DTO\CreateTicketData;
+use App\Modules\Ticket\Application\DTO\UpdateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Application\Services\Ticket;
+namespace App\Modules\Ticket\Application\Services;
 
-use App\Application\Contracts\Services\TicketServiceInterface;
-use App\Application\Ticket\Actions\CreateTicketAction;
-use App\Application\Ticket\Actions\DeleteTicketAction;
-use App\Application\Ticket\Actions\UpdateTicketAction;
-use App\Application\Ticket\DTO\CreateTicketData;
-use App\Application\Ticket\DTO\UpdateTicketData;
+use App\Modules\Ticket\Application\Contracts\TicketServiceInterface;
+use App\Modules\Ticket\Application\Actions\CreateTicketAction;
+use App\Modules\Ticket\Application\Actions\DeleteTicketAction;
+use App\Modules\Ticket\Application\Actions\UpdateTicketAction;
+use App\Modules\Ticket\Application\DTO\CreateTicketData;
+use App\Modules\Ticket\Application\DTO\UpdateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 

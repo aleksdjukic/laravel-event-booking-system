@@ -2,7 +2,7 @@
 
 namespace App\Modules\Ticket\Presentation\Http\Requests;
 
-use App\Application\Ticket\DTO\CreateTicketData;
+use App\Modules\Ticket\Application\DTO\CreateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Ticket\Models\Ticket;
 use Illuminate\Foundation\Http\FormRequest;

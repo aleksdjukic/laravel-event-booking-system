@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Ticket\DTO;
+namespace App\Modules\Ticket\Application\DTO;
 
 class UpdateTicketData
 {

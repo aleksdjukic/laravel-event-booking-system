@@ -2,8 +2,8 @@
 
 namespace App\Modules\Ticket\Providers;
 
-use App\Application\Contracts\Services\TicketServiceInterface;
-use App\Application\Services\Ticket\TicketService;
+use App\Modules\Ticket\Application\Contracts\TicketServiceInterface;
+use App\Modules\Ticket\Application\Services\TicketService;
 use App\Domain\Ticket\Models\Ticket;
 use App\Domain\Ticket\Policies\TicketPolicy;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;

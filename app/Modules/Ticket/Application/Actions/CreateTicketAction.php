@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Application\Ticket\Actions;
+namespace App\Modules\Ticket\Application\Actions;
 
 use App\Modules\Event\Application\Actions\BumpEventIndexVersionAction;
-use App\Application\Ticket\DTO\CreateTicketData;
+use App\Modules\Ticket\Application\DTO\CreateTicketData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;

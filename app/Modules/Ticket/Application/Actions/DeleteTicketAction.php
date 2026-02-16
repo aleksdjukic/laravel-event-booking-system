@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Ticket\Actions;
+namespace App\Modules\Ticket\Application\Actions;
 
 use App\Modules\Event\Application\Actions\BumpEventIndexVersionAction;
 use App\Domain\Ticket\Models\Ticket;
