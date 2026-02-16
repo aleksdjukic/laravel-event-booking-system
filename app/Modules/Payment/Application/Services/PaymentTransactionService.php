@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application\Services\Payment;
+namespace App\Modules\Payment\Application\Services;
 
-use App\Application\Payment\Actions\ProcessPaymentAction;
-use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
-use App\Application\Payment\DTO\CreatePaymentData;
+use App\Modules\Payment\Application\Actions\ProcessPaymentAction;
+use App\Modules\Payment\Application\Contracts\PaymentTransactionServiceInterface;
+use App\Modules\Payment\Application\DTO\CreatePaymentData;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\User\Models\User;
 

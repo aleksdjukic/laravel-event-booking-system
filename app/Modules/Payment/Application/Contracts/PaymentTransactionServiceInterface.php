@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Contracts\Services;
+namespace App\Modules\Payment\Application\Contracts;
 
-use App\Application\Payment\DTO\CreatePaymentData;
+use App\Modules\Payment\Application\DTO\CreatePaymentData;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\User\Models\User;
 

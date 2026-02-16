@@ -2,7 +2,7 @@
 
 namespace App\Modules\Payment\Presentation\Http\Controllers;
 
-use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
+use App\Modules\Payment\Application\Contracts\PaymentTransactionServiceInterface;
 use App\Modules\Shared\Presentation\Http\Controllers\ApiController;
 use App\Domain\Booking\Models\Booking;
 use App\Domain\Payment\Models\Payment;

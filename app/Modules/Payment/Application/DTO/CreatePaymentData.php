@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Payment\DTO;
+namespace App\Modules\Payment\Application\DTO;
 
 class CreatePaymentData
 {

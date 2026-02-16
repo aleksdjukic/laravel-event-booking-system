@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Application\Payment\Actions;
+namespace App\Modules\Payment\Application\Actions;
 
-use App\Application\Payment\DTO\CreatePaymentData;
+use App\Modules\Payment\Application\DTO\CreatePaymentData;
 use App\Domain\Payment\Models\PaymentIdempotencyKey;
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
 use App\Domain\Shared\DomainError;

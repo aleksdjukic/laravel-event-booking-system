@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Payment\Actions;
+namespace App\Modules\Payment\Application\Actions;
 
 use App\Domain\Booking\BookingTransitionGuard;
 use App\Domain\Booking\Models\Booking;

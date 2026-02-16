@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Payment\Actions;
+namespace App\Modules\Payment\Application\Actions;
 
 use App\Domain\Booking\Repositories\BookingRepositoryInterface;
 use App\Domain\Payment\PaymentTransitionGuard;
@@ -9,7 +9,7 @@ use App\Domain\Payment\Services\PaymentGatewayInterface;
 use App\Domain\Shared\DomainError;
 use App\Domain\Shared\DomainException;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
-use App\Application\Payment\DTO\CreatePaymentData;
+use App\Modules\Payment\Application\DTO\CreatePaymentData;
 use App\Domain\Booking\Enums\BookingStatus;
 use App\Domain\Event\Models\Event;
 use App\Domain\Payment\Enums\PaymentStatus;

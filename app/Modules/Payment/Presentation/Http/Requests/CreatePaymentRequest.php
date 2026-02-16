@@ -2,7 +2,7 @@
 
 namespace App\Modules\Payment\Presentation\Http\Requests;
 
-use App\Application\Payment\DTO\CreatePaymentData;
+use App\Modules\Payment\Application\DTO\CreatePaymentData;
 use App\Domain\Booking\Models\Booking;
 use Illuminate\Foundation\Http\FormRequest;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Payment\Actions;
+namespace App\Modules\Payment\Application\Actions;
 
 use App\Domain\Payment\Models\PaymentIdempotencyKey;
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;

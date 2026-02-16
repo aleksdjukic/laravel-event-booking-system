@@ -2,8 +2,8 @@
 
 namespace App\Modules\Payment\Providers;
 
-use App\Application\Contracts\Services\PaymentTransactionServiceInterface;
-use App\Application\Services\Payment\PaymentTransactionService;
+use App\Modules\Payment\Application\Contracts\PaymentTransactionServiceInterface;
+use App\Modules\Payment\Application\Services\PaymentTransactionService;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Payment\Policies\PaymentPolicy;
 use App\Domain\Payment\Repositories\PaymentIdempotencyRepositoryInterface;
