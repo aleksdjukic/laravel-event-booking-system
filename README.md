@@ -115,6 +115,36 @@ Source of truth:
 - OpenAPI spec: `openapi/openapi.yaml`
 - Live routes: `php artisan route:list`
 
+Auth:
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/logout`
+- `GET /user/me`
+
+Events:
+- `GET /events`
+- `GET /events/{event}`
+- `POST /events`
+- `PUT /events/{event}`
+- `DELETE /events/{event}`
+
+Tickets:
+- `POST /events/{event}/tickets`
+- `PUT /tickets/{ticket}`
+- `DELETE /tickets/{ticket}`
+
+Bookings:
+- `POST /tickets/{ticket}/bookings`
+- `GET /bookings`
+- `PUT /bookings/{booking}/cancel`
+
+Payments:
+- `POST /bookings/{booking}/payment`
+- `GET /payments/{payment}`
+
+Health:
+- `GET /ping`
+
 ## RBAC Matrix
 - `admin`: full access across events/tickets/bookings/payments.
 - `organizer`: can manage only own events/tickets.
