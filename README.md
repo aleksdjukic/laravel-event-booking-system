@@ -73,20 +73,13 @@ Design direction:
 - Use-case oriented application layer
 - Domain-first contracts + explicit invariants
 
-## DDD & Modern Backend Practices
+## Architecture & Principles
 - Domain-first modular monolith with clear layer boundaries: `Domain`, `Application`, `Infrastructure`, `Presentation`.
 - Modules are isolated by responsibility and interact through contracts/use-cases, not ad-hoc cross-module calls.
-- Business rules are explicit (status enums, transition guards, policies, invariants).
-- Controllers are thin; validation is in Form Requests; use-cases live in application actions/services.
-- Interfaces define domain boundaries, while Eloquent/adapters stay in infrastructure.
-- Stable API contract via centralized responder and exception mapping.
-- Production primitives included: idempotent payments, queued notifications, cache versioning, static analysis, automated tests.
-
-## Why This Matters In Production
-- Better maintainability: less coupling, safer refactors.
-- Better scalability: swappable adapters and clean use-case boundaries.
-- Better reliability: explicit invariants and idempotency reduce duplicate/race-condition issues.
-- Better upgradeability: infrastructure is isolated from domain rules.
+- Controllers are thin; validation lives in Form Requests; use-cases are in application actions/services.
+- Domain rules are explicit via enums, transition guards, policies, and DB-backed invariants.
+- Interfaces define boundaries while Eloquent/integration details stay in infrastructure.
+- API contract is stabilized through centralized responder + exception mapping.
 
 ## API Contract
 Base path: `/api/v1`
@@ -112,35 +105,15 @@ Standard statuses:
 - `500` unexpected server error
 
 ## Endpoint Overview
-Auth:
-- `POST /auth/register`
-- `POST /auth/login`
-- `POST /auth/logout`
-- `GET /user/me`
+Primary endpoint groups:
+- Auth: register/login/logout/me
+- Events and Tickets: event CRUD + ticket management
+- Bookings and Payments: booking flow, cancel flow, idempotent payment flow
+- Health: ping endpoint
 
-Events:
-- `GET /events`
-- `GET /events/{event}`
-- `POST /events`
-- `PUT /events/{event}`
-- `DELETE /events/{event}`
-
-Tickets:
-- `POST /events/{event}/tickets`
-- `PUT /tickets/{ticket}`
-- `DELETE /tickets/{ticket}`
-
-Bookings:
-- `POST /tickets/{ticket}/bookings`
-- `GET /bookings`
-- `PUT /bookings/{booking}/cancel`
-
-Payments:
-- `POST /bookings/{booking}/payment`
-- `GET /payments/{payment}`
-
-Health:
-- `GET /ping`
+Source of truth:
+- OpenAPI spec: `openapi/openapi.yaml`
+- Live routes: `php artisan route:list`
 
 ## RBAC Matrix
 - `admin`: full access across events/tickets/bookings/payments.
@@ -170,7 +143,9 @@ Behavior:
 ### Quick start
 1. `composer install`
 2. `cp .env.example .env`
-3. `touch database/database.sqlite` (for SQLite)
+3. Configure DB connection:
+   - SQLite: `touch database/database.sqlite` and set `DB_CONNECTION=sqlite`
+   - MySQL/PostgreSQL: set `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
 4. `php artisan key:generate`
 5. `php artisan migrate:fresh --seed`
 6. `php artisan serve`
