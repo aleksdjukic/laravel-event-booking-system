@@ -49,7 +49,7 @@ Key invariants:
 ## Architecture Snapshot
 Architecture style:
 - Modular monolith, domain-first (DDD-style).
-- Each module owns `Domain`, `Application`, `Infrastructure`, and `Presentation` layers.
+- Modules are organized into `Domain`, `Application`, `Infrastructure`, and `Presentation` layers where needed.
 
 Core modules:
 - `Auth`
@@ -160,6 +160,7 @@ Event index caching:
 - Booking confirmation notification implements `ShouldQueue`.
 - Notification channel: `database`.
 - Triggered only for successful payment transitions.
+- If you persist database notifications, add Laravel's `notifications` table migration.
 
 ## Idempotent Payment Flow
 `POST /bookings/{booking}/payment` supports header:
@@ -186,9 +187,9 @@ Behavior:
 - `customer@example.com` / `password123`
 
 Seeded review dataset includes:
-- 2 admins
-- 3 organizers
-- 10 customers
+- 3 admins (including demo admin)
+- 4 organizers (including demo organizer)
+- 11 customers (including demo customer)
 - 5 events
 - 15 tickets
 - 20 bookings
