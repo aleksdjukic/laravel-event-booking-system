@@ -6,6 +6,7 @@
 [![CI](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-passing-16A34A)](https://phpstan.org/)
 [![Tests](https://img.shields.io/badge/Tests-passing-16A34A)](./tests)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/aleksdjukic/laravel-event-booking-system/main/.github/badges/coverage.json)](https://github.com/aleksdjukic/laravel-event-booking-system/actions/workflows/ci.yml)
 [![API](https://img.shields.io/badge/API-Versioned%20(v1)-2563EB)](./routes/api.php)
 
 Production-grade Laravel backend for event booking built as a modular monolith (DDD-style), with strong API contracts, RBAC, idempotent payments, caching, and queue-backed notifications.
